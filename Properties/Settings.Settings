@@ -1,0 +1,30 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ChristophNieswand.NINA.Astrocolibri.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="UpdateSettings" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AstroColibriAPIUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://astro-colibri.science/</Value>
+    </Setting>
+    <Setting Name="AstroColibriUID" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WaitMinMinutes" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="JSONFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%localappdata%\AstroColibri\Events\JSON\</Value>
+    </Setting>
+    <Setting Name="KeepFilesDays" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="MinAltitude" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="AstroColibriWebUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://astro-colibri.com/</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

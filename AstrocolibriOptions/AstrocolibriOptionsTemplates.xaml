@@ -1,0 +1,115 @@
+﻿<ResourceDictionary
+    x:Class="ChristophNieswand.NINA.Astrocolibri.AstrocolibriOptions.AstrocolibriOptionsTemplates"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate x:Key="AstroColibri_Options">
+        <StackPanel Orientation="Vertical">
+            <DockPanel Margin="0,5,0,0" LastChildFill="False">
+                <TextBlock
+                    Margin="0,15,0,15"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    TextWrapping="Wrap">
+                    To retrieve or create your API credentials, go to&#032;<Hyperlink NavigateUri="{Binding Path=AstroColibriOptions.WebUrl}" RequestNavigate="WebPageClick">
+                        <TextBlock Text="{Binding Path=AstroColibriOptions.WebUrl}" />
+                    </Hyperlink>
+                    and click on "Personalize".</TextBlock>
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="False">
+                <TextBlock
+                    Width="300"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="Astro-Colibri User ID" />
+                <TextBox
+                    MinWidth="75"
+                    MaxWidth="700"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding AstroColibriOptions.Uid}" />
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="True">
+                <TextBlock
+                    Width="300"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="Next check for new transients in minutes" />
+                <TextBox
+                    Width="75"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding AstroColibriOptions.WaitMinMinutes}" />
+                <TextBlock
+                    Width="700"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="Minimum 10 minutes. Currently 100 checks are allowed per day and User ID (Astro-Colibri limitation)." />
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="False">
+                <TextBlock
+                    Width="300"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="Path to Event Folder" />
+                <TextBox
+                    MinWidth="75"
+                    MaxWidth="700"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding AstroColibriOptions.JSONFilePath}" />
+                <Button
+                    Width="20"
+                    Height="20"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding OpenJSONFolderDiagCommand}">
+                    <Path
+                        Margin="2,10,2,0"
+                        Data="{StaticResource DotsSVG}"
+                        Fill="{StaticResource ButtonForegroundBrush}"
+                        Stretch="Uniform" />
+                </Button>
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="False">
+                <TextBlock
+                    Width="300"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="Keep Files for days" />
+                <TextBox
+                    Width="75"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding AstroColibriOptions.KeepFilesDays}" />
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="False">
+                <TextBlock
+                    Width="300"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="Minimum Altitude in degrees" />
+                <TextBox
+                    Width="75"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding AstroColibriOptions.MinAltitude}" />
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="False">
+                <Button
+                    Width="400"
+                    Height="40"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding API.RunLatestTransientsCommand}"
+                    Content="Check for Transients" />
+            </DockPanel>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>
