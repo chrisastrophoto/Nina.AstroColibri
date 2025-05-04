@@ -7,8 +7,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("1.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.0.2")]
+[assembly: AssemblyFileVersion("1.0.0.2")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("AstroColibri")]
@@ -39,10 +39,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyMetadata("Homepage", "")]
 
 //[Optional] Common tags that quickly describe your plugin
-[assembly: AssemblyMetadata("Tags", "")]
+[assembly: AssemblyMetadata("Tags", "AstroColibri, MultiMessenger, Transients")]
 
 //[Optional] A link that will show a log of all changes in between your plugin's versions
-[assembly: AssemblyMetadata("ChangelogURL", "https://github.com/chrisastrophoto/Nina.AstroColibri/CHANGELOG.md")]
+[assembly: AssemblyMetadata("ChangelogURL", "https://github.com/chrisastrophoto/Nina.AstroColibri/blob/master/CHANGELOG.md")]
 
 //[Optional] The url to a featured logo that will be displayed in the plugin list next to the name
 [assembly: AssemblyMetadata("FeaturedImageURL", "https://astro-colibri.science/static/Pictures/deco/COLIBRI_Logo400.png")]
@@ -63,7 +63,7 @@ The trigger condition is evaluated after each frame and as long as the sequence 
 
 See more about [Astro-Colibris API here](https://astro-colibri.science/apidoc)
 
-For more information please see [the readme](https://github.com/chrisastrophoto/Nina.AstroColibri/README.md)
+For more information please see [the readme](https://github.com/chrisastrophoto/Nina.AstroColibri/blob/master/README.md)
 
 # Suggestion Welcome
 
