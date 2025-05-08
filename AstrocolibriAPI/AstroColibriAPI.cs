@@ -18,13 +18,17 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             LastTransientCheck = DateTime.Now.Subtract(new TimeSpan(0, Astrocolibri.AstroColibriOptions.WaitMinMinutes, 0, 0));
             CoreUtil.DirectoryCleanup(Astrocolibri.AstroColibriOptions.JSONFilePath, new TimeSpan(-Astrocolibri.AstroColibriOptions.KeepFilesDays, 0, 0, 0));
             ACEvents = new AstroColibriEvents();
-
+            HasNoTransient = true;
             RunLatestTransientsCommand = new GalaSoft.MvvmLight.Command.RelayCommand(DoLatestTransients);
         }
 
         public DateTime LastTransientCheck { get; private set; }
 
         public AstroColibriEvents ACEvents { get; private set; }
+
+        public Boolean HasNoTransient { get; set; }
+
+        public DeepSkyObject LatestTransient { get; private set; }
 
         //public CustomHorizon Horizon { get; private set; }
 
@@ -170,8 +174,8 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
                 try {
                     // Read from file for testing purposes
-                    //resp = ReadEventFromFile("LatestEvents_20250424145440.json");
-                    resp = (Task.Run(() => CallAPIPostAsync("latest_transients", body))).Result;
+                    resp = ReadEventFromFile("LatestEvents_20250424145440.json");
+                    //resp = (Task.Run(() => CallAPIPostAsync("latest_transients", body))).Result;
                     string now = DateTime.Now.ToString("yyyyMMddHHmmss");
 
                     LatestTransientsResponse ltr = JsonConvert.DeserializeObject<LatestTransientsResponse>(resp);
@@ -209,6 +213,8 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                                 if (alt > Astrocolibri.AstroColibriOptions.MinAltitude) {
                                     Notification.ShowWarning("Event " + er.source_name + " is visible! Altidude now: " + alt, new TimeSpan(0, 10, 0, 0));
                                     Logger.Info("Event " + er.source_name + " is visible! Altitude now:" + alt);
+                                    LatestTransient = dso;
+                                    HasNoTransient = false;
                                 } else {
                                     Notification.ShowInformation("Event " + er.source_name + " is currently not visible: Altidude now: " + alt, new TimeSpan(0, 10, 0, 0));
                                     Logger.Info("Event " + er.source_name + " is currently not visible: Altitude now:" + alt);
