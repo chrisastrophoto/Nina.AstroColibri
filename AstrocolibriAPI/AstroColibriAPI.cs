@@ -11,6 +11,7 @@ using NINA.Core.Model;
 using System.Windows.Input;
 using System.Reflection;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
@@ -201,15 +202,16 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                                 err = "";
                             float dec = er.dec;
                             float ra = er.ra;
-                            double alt = GetAltitude(er);
+                            double[] altaz = GetAltitude(er);
+                            double alt = altaz[0];
                             //VisibilityPlotResponse vis = VisibilityPlot(er, now);
                             VisibilityPlotDetailedResponse visDet = VisibilityPlotDetailed(er, now);
                             DeepSkyObject dso = new DeepSkyObject(er.source_name, new Coordinates(er.ra, er.dec, Epoch.J2000, Coordinates.RAType.Degrees), "", Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Horizon);
-                            if (dec <= Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude - 90.0 + Astrocolibri.AstroColibriOptions.MinAltitude) {
+                            if (isNeverVisible(dec)) {
                                 Notification.ShowSuccess("Event " + er.source_name + " is NEVER visible and will be ignored! Declination: " + dec);
                                 Logger.Info("Event " + er.source_name + " is NEVER visible and will be ignored! Declination: " + dec);
                             } else {
-                                if (alt > Astrocolibri.AstroColibriOptions.MinAltitude) {
+                                if (isVisibleNow(altaz)) {
                                     Notification.ShowWarning("Event " + er.source_name + " is visible! Altidude now: " + alt, new TimeSpan(0, 10, 0, 0));
                                     Logger.Info("Event " + er.source_name + " is visible! Altitude now:" + alt);
                                     LatestTransient = dso;
@@ -267,7 +269,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             return json;
         }
 
-        private double GetAltitude(EventResponse resp) {
+        private double[] GetAltitude(EventResponse resp) {
             DateTime now = DateTime.Now;
 
             double LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
@@ -276,9 +278,33 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
             double HADeg = AstroUtil.HoursToDegrees(HA);
 
-            double a = AstroUtil.GetAltitude(HADeg, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude, resp.dec);
+            double alt = AstroUtil.GetAltitude(HADeg, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude, resp.dec);
+            double az = AstroUtil.GetAzimuth(HADeg, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude, resp.dec);
 
-            return a;
+            double[] altaz = new double[2];
+            altaz[0] = alt;
+            altaz[1] = az;
+
+            return altaz;
+        }
+
+        private bool isNeverVisible(double dec) {
+            bool nv = false;
+            double lat = Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude;
+            double minalt = Astrocolibri.AstroColibriOptions.MinAltitude;
+            double za = 90.0 - minalt;
+            if (lat >= 0) {
+                nv = (dec <= lat - za) || (dec >= lat + za && minalt >= 2 * lat);
+            } else {
+                nv = (dec >= lat + za) || (dec <= lat - za && minalt >= -2 * lat);
+            }
+            return nv;
+        }
+
+        private bool isVisibleNow(double[] altaz) {
+            double halt = Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Horizon.GetAltitude(altaz[1]);
+
+            return altaz[0] > Astrocolibri.AstroColibriOptions.MinAltitude && altaz[0] > halt;
         }
     }
 }
