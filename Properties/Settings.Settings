@@ -26,5 +26,11 @@
     <Setting Name="AstroColibriWebUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://astro-colibri.com/</Value>
     </Setting>
+    <Setting Name="DSOTemplate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AstroColibri</Value>
+    </Setting>
+    <Setting Name="Testmode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

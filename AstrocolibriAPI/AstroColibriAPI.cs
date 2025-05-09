@@ -9,6 +9,8 @@ using NINA.Core.Utility.Notification;
 using NINA.Astrometry;
 using NINA.Core.Model;
 using System.Windows.Input;
+using System.Reflection;
+using System.Linq;
 
 namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
@@ -146,12 +148,8 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             int diff = (int)DateTime.Now.Subtract(LastTransientCheck).TotalMinutes;
             int soll = Astrocolibri.AstroColibriOptions.WaitMinMinutes;
 
-            /*
-             *
-             * Switch to ensure to trigger each time
-             *
-             */
-            //diff = 1000;
+            if (Astrocolibri.AstroColibriOptions.TestMode)
+                diff = 10000;
 
             if (diff >= soll) {
                 Logger.Info("Checking for latest Events from Astro-Colibri");
@@ -173,9 +171,10 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                 string body = JsonConvert.SerializeObject(eb, SerSet);
 
                 try {
-                    // Read from file for testing purposes
-                    resp = ReadEventFromFile("LatestEvents_20250424145440.json");
-                    //resp = (Task.Run(() => CallAPIPostAsync("latest_transients", body))).Result;
+                    resp = Astrocolibri.AstroColibriOptions.TestMode
+                        ? ReadEventFromResource("LatestEvents_TestSet.json")
+                        : (Task.Run(() => CallAPIPostAsync("latest_transients", body))).Result;
+
                     string now = DateTime.Now.ToString("yyyyMMddHHmmss");
 
                     LatestTransientsResponse ltr = JsonConvert.DeserializeObject<LatestTransientsResponse>(resp);
@@ -254,6 +253,18 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
         private string ReadEventFromFile(string name) {
             return File.ReadAllText(Path.Combine(Astrocolibri.AstroColibriOptions.JSONFilePath, name));
+        }
+
+        private string ReadEventFromResource(string resource) {
+            string json = "";
+
+            string resourceName = Assembly.GetAssembly(this.GetType()).GetManifestResourceNames().Single(str => str.EndsWith(resource));
+
+            using (Stream stream = Assembly.GetAssembly(this.GetType()).GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream)) {
+                json = reader.ReadToEnd();
+            }
+            return json;
         }
 
         private double GetAltitude(EventResponse resp) {

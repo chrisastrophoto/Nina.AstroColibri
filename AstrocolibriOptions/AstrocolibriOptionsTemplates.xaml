@@ -101,6 +101,34 @@
                     Text="{Binding AstroColibriOptions.MinAltitude}" />
             </DockPanel>
             <DockPanel Margin="0,5,0,0" LastChildFill="False">
+                <TextBlock
+                    Width="300"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="DSO Template" />
+                <TextBox
+                    MinWidth="75"
+                    MaxWidth="700"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding AstroColibriOptions.DsoTemplate}" />
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="False">
+                <TextBlock
+                    Width="300"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="Test Mode" />
+                <CheckBox
+                    MinWidth="75"
+                    MaxWidth="700"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding AstroColibriOptions.TestMode}" />
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="False">
                 <Button
                     Width="400"
                     Height="40"

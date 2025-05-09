@@ -15,6 +15,7 @@
     <None Remove="Resources\COLIBRI_Logo400.svg" />
     <None Remove="Resources\COLIBRI_Logo400bw.png" />
     <None Remove="Resources\COLIBRI_Logo400bwBinary.png" />
+    <None Remove="Resources\LatestEvents_TestSet.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NINA.Plugin" Version="3.0.0.2017-beta" />
@@ -33,6 +34,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\LatestEvents_TestSet.json" />
     <Resource Include="Resources\PNG\COLIBRI_Logo400.png" />
     <Resource Include="Resources\SVG\COLIBRI_Logo400.svg" />
     <Resource Include="Resources\PNG\COLIBRI_Logo400bw.png" />

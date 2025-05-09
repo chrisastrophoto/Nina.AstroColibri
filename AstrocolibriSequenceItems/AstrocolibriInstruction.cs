@@ -5,6 +5,7 @@ using NINA.Core.Model;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
 using NINA.Profile;
+using NINA.Profile.Interfaces;
 using NINA.Sequencer.Container;
 using NINA.Sequencer.Interfaces.Mediator;
 using NINA.Sequencer.Mediator;
@@ -73,12 +74,13 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         ///     - IList<IDateTimeProvider>
         /// </remarks>
         [ImportingConstructor]
-        public AstrocolibriInstruction(IApplicationMediator applicationMediator, ISequenceMediator sequenceMediator) {
+        public AstrocolibriInstruction(IProfileService profileService, IApplicationMediator applicationMediator, ISequenceMediator sequenceMediator) {
+            ProfileService = profileService;
             ApplicationMediator = applicationMediator;
             SequenceMediator = sequenceMediator;
         }
 
-        public AstrocolibriInstruction(IApplicationMediator applicationMediator, ISequenceMediator sequenceMediator, AstrocolibriInstruction copyMe) : this(applicationMediator, sequenceMediator) {
+        public AstrocolibriInstruction(IProfileService profileService, IApplicationMediator applicationMediator, ISequenceMediator sequenceMediator, AstrocolibriInstruction copyMe) : this(profileService, applicationMediator, sequenceMediator) {
             CopyMetaData(copyMe);
         }
 
@@ -92,6 +94,8 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         public IApplicationMediator ApplicationMediator { get; set; }
 
         public ISequenceMediator SequenceMediator { get; set; }
+
+        public IProfileService ProfileService { get; set; }
 
         /// <summary>
         /// The core logic when the sequence item is running resides here
@@ -115,7 +119,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         /// </summary>
         /// <returns></returns>
         public override object Clone() {
-            return new AstrocolibriInstruction(ApplicationMediator, SequenceMediator, this);
+            return new AstrocolibriInstruction(ProfileService, ApplicationMediator, SequenceMediator, this);
         }
 
         /// <summary>
@@ -134,16 +138,18 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
 
                 IList<IDeepSkyObjectContainer> DSOTemplates = SequenceMediator.GetDeepSkyObjectContainerTemplates();
                 IDeepSkyObjectContainer container = null;
+                string dsoTemplateName = Astrocolibri.AstroColibriOptions.DsoTemplate == "" ? "AstroColibri" : Astrocolibri.AstroColibriOptions.DsoTemplate;
                 foreach (IDeepSkyObjectContainer c in DSOTemplates)
-                    if (c.Name == "AstroColibri") {
+                    if (c.Name == dsoTemplateName) {
                         container = c;
                         break;
                     }
                 if (container != null) {
-                    InputTarget it = new InputTarget(Angle.ByDegree(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude), Angle.ByDegree(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude), Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Horizon);
-                    it.DeepSkyObject = dso;
-                    it.InputCoordinates = new InputCoordinates(dso.Coordinates);
-                    it.TargetName = dso.Name == null || dso.Name == "" ? "NoName" : dso.Name;
+                    InputTarget it = new InputTarget(Angle.ByDegree(ProfileService.ActiveProfile.AstrometrySettings.Latitude), Angle.ByDegree(ProfileService.ActiveProfile.AstrometrySettings.Longitude), ProfileService.ActiveProfile.AstrometrySettings.Horizon) {
+                        DeepSkyObject = dso,
+                        InputCoordinates = new InputCoordinates(dso.Coordinates),
+                        TargetName = dso.Name == null || dso.Name == "" ? "NoName" : dso.Name
+                    };
                     container.Target = it;
                     container.Name = dso.Name == null || dso.Name == "" ? "NoName" : dso.Name;
                     await Application.Current.Dispatcher.BeginInvoke(() => {
@@ -151,6 +157,9 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
                         SequenceMediator.AddAdvancedTarget(container);
                     });
                     await Task.Delay(100);
+                } else {
+                    Notification.ShowInformation("DSO Template " + dsoTemplateName + " not found");
+                    Logger.Info("DSO Template " + dsoTemplateName + " not found");
                 }
             });
         }

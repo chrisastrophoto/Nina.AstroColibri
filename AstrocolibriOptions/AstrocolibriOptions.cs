@@ -34,6 +34,8 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriOptions {
             jsonFilePath = optionsAccessor.GetValueString(nameof(JSONFilePath), Environment.ExpandEnvironmentVariables(Properties.Settings.Default.JSONFilePath));
             keepFilesDays = optionsAccessor.GetValueInt32(nameof(KeepFilesDays), Properties.Settings.Default.KeepFilesDays);
             minAltitude = optionsAccessor.GetValueDouble(nameof(MinAltitude), Properties.Settings.Default.MinAltitude);
+            testMode = optionsAccessor.GetValueBoolean(nameof(TestMode), Properties.Settings.Default.Testmode);
+            dsoTemplate = optionsAccessor.GetValueString(nameof(DsoTemplate), Properties.Settings.Default.DSOTemplate);
         }
 
         private string uid;
@@ -143,6 +145,34 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriOptions {
                     Logger.Debug($"Set Minimum Altitude={value}");
                     minAltitude = value;
                     optionsAccessor.SetValueDouble(nameof(MinAltitude), minAltitude);
+                    ac.RaisePropertyChanged();
+                }
+            }
+        }
+
+        private bool testMode;
+
+        public bool TestMode {
+            get => testMode;
+            set {
+                if (testMode != value) {
+                    Logger.Debug($"Set Testmode={value}");
+                    testMode = value;
+                    optionsAccessor.SetValueBoolean(nameof(TestMode), testMode);
+                    ac.RaisePropertyChanged();
+                }
+            }
+        }
+
+        private string dsoTemplate;
+
+        public string DsoTemplate {
+            get => dsoTemplate;
+            set {
+                if (dsoTemplate != value) {
+                    Logger.Debug($"Set DSO Template={value}");
+                    dsoTemplate = value;
+                    optionsAccessor.SetValueString(nameof(DsoTemplate), dsoTemplate);
                     ac.RaisePropertyChanged();
                 }
             }

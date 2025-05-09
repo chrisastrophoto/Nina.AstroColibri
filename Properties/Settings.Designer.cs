@@ -118,5 +118,29 @@ namespace ChristophNieswand.NINA.Astrocolibri.Properties {
                 this["AstroColibriWebUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("AstroColibri")]
+        public string DSOTemplate {
+            get {
+                return ((string)(this["DSOTemplate"]));
+            }
+            set {
+                this["DSOTemplate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Testmode {
+            get {
+                return ((bool)(this["Testmode"]));
+            }
+            set {
+                this["Testmode"] = value;
+            }
+        }
     }
 }
