@@ -55,7 +55,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         public override Task Execute(ISequenceContainer context, IProgress<ApplicationStatus> progress, CancellationToken token) {
             Astrocolibri.API.LatestTransients();
             //if (!Astrocolibri.API.HasNoTransient && Astrocolibri.API.LatestTransient != null) {
-            //   AddDSOSequence(Astrocolibri.API.LatestTransient);
+            //    AddDSOSequence(Astrocolibri.API.LatestTransient);
             //}
             return Task.CompletedTask;
         }
@@ -67,7 +67,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         public override bool ShouldTriggerAfter(ISequenceItem previousItem, ISequenceItem nextItem) {
             string mes = "After >> " + (previousItem == null ? "" : (previousItem.Name + ":" + previousItem.Category)) + " --> " + (nextItem == null ? "" : (nextItem.Name + ":" + nextItem.Category)) + " <<";
             Logger.Info(mes);
-            if (previousItem != null && previousItem.Name.Equals("Take Exposure") && previousItem.Category.Equals("Camera")) {
+            if (previousItem != null && previousItem.Name != null && previousItem.Category != null && previousItem.Name.Equals("Take Exposure") && previousItem.Category.Equals("Camera")) {
                 return true;
             }
             return false;
@@ -101,6 +101,14 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
                     await Application.Current.Dispatcher.BeginInvoke(() => {
                         Logger.Info($"Adding target " + dso.Name + "to advanced sequencer: {container.Target.DeepSkyObject.Name} - {container.Target.DeepSkyObject.Coordinates}");
                         SequenceMediator.AddAdvancedTarget(container);
+                    });
+                    SequenceMediator.CancelAdvancedSequence();
+                    while (SequenceMediator.IsAdvancedSequenceRunning()) {
+                        await Task.Delay(100);
+                    }
+                    await Application.Current.Dispatcher.BeginInvoke(() => {
+                        Logger.Info($"Relaunching Sequencer");
+                        SequenceMediator.StartAdvancedSequence(true);
                     });
                 } else {
                     Notification.ShowInformation("DSO Template " + dsoTemplateName + " not found");

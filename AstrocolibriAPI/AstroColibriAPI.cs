@@ -294,25 +294,6 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             return json;
         }
 
-        private double[] GetAltitude(EventResponse resp) {
-            DateTime now = DateTime.Now;
-
-            double LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
-
-            double HA = AstroUtil.GetHourAngle(LST, AstroUtil.DegreesToHours(resp.ra));
-
-            double HADeg = AstroUtil.HoursToDegrees(HA);
-
-            double alt = AstroUtil.GetAltitude(HADeg, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude, resp.dec);
-            double az = AstroUtil.GetAzimuth(HADeg, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude, resp.dec);
-
-            double[] altaz = new double[2];
-            altaz[0] = alt;
-            altaz[1] = az;
-
-            return altaz;
-        }
-
         private double[] GetAltitude(double ra, double dec) {
             DateTime now = DateTime.Now;
 
