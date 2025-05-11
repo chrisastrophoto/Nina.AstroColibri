@@ -1,12 +1,26 @@
 ﻿using Newtonsoft.Json;
+using NINA.Astrometry;
+using NINA.Core.Enum;
+using NINA.Core.Utility;
+using NINA.Core.Utility.Notification;
+using NINA.Profile;
+using NINA.Profile.Interfaces;
 using NINA.Sequencer.Conditions;
+using NINA.Sequencer.Container;
+using NINA.Sequencer.Interfaces.Mediator;
+using NINA.Sequencer.Mediator;
 using NINA.Sequencer.SequenceItem;
+using NINA.WPF.Base.Interfaces.Mediator;
+using NINA.WPF.Base.Mediator;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Threading.Tasks;
+using Castle.Components.DictionaryAdapter.Xml;
+using NINA.Sequencer.Utility;
 
 namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
 
@@ -60,10 +74,12 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         ///     - IList<IDateTimeProvider>
         /// </remarks>
         [ImportingConstructor]
-        public AstrocolibriCondition() {
+        public AstrocolibriCondition(ISequenceMediator sequenceMediator) {
             HasNoTransient = true;
+            SequenceMediator = sequenceMediator;
         }
 
+        public ISequenceMediator SequenceMediator { get; set; }
         private bool hasNoTransient;
 
         [JsonProperty]
@@ -83,11 +99,13 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         /// <returns></returns>
         public override bool Check(ISequenceItem previousItem, ISequenceItem nextItem) {
             HasNoTransient = Astrocolibri.API.HasNoTransient;
+
+            Astrocolibri.API.HasNoTransient = true;
             return HasNoTransient;
         }
 
         public override object Clone() {
-            return new AstrocolibriCondition() {
+            return new AstrocolibriCondition(SequenceMediator) {
                 Icon = Icon,
                 Name = Name,
                 Category = Category,

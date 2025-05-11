@@ -12,6 +12,8 @@ using System.Windows.Input;
 using System.Reflection;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
+using System.Diagnostics.Eventing.Reader;
 
 namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
@@ -164,6 +166,8 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                 };
                 // Reset last check for transients
                 LastTransientCheck = DateTime.Now;
+                LatestTransient = null;
+                HasNoTransient = true;
 
                 JsonSerializerSettings SerSet = new JsonSerializerSettings();
                 SerSet.Formatting = Formatting.Indented;
@@ -200,13 +204,34 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                                 }
                             if (err == "None deg" || err == "-1.0 deg")
                                 err = "";
-                            float dec = er.dec;
-                            float ra = er.ra;
-                            double[] altaz = GetAltitude(er);
-                            double alt = altaz[0];
+                            double dec = er.dec;
+                            double ra = er.ra;
                             //VisibilityPlotResponse vis = VisibilityPlot(er, now);
                             VisibilityPlotDetailedResponse visDet = VisibilityPlotDetailed(er, now);
-                            DeepSkyObject dso = new DeepSkyObject(er.source_name, new Coordinates(er.ra, er.dec, Epoch.J2000, Coordinates.RAType.Degrees), "", Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Horizon);
+                            DeepSkyObject dso = new DeepSkyObject(er.trigger_id, new Coordinates(er.ra, er.dec, Epoch.J2000, Coordinates.RAType.Degrees), "", Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Horizon);
+                            dso.Name = er.source_name;
+                            if (Astrocolibri.AstroColibriOptions.TestMode) {
+                                switch (er.source_name) {
+                                    case "Visible Target":
+                                        makeVisible(dso);
+                                        break;
+
+                                    case "Invisible Target":
+                                        makeInvisible(dso);
+                                        break;
+
+                                    case "Never visible Target":
+                                        makeNeverVisible(dso);
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                                dec = dso.Coordinates.Dec;
+                                ra = dso.Coordinates.RADegrees;
+                            }
+                            double[] altaz = GetAltitude(ra, dec);
+                            double alt = altaz[0];
                             if (isNeverVisible(dec)) {
                                 Notification.ShowSuccess("Event " + er.source_name + " is NEVER visible and will be ignored! Declination: " + dec);
                                 Logger.Info("Event " + er.source_name + " is NEVER visible and will be ignored! Declination: " + dec);
@@ -288,6 +313,25 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             return altaz;
         }
 
+        private double[] GetAltitude(double ra, double dec) {
+            DateTime now = DateTime.Now;
+
+            double LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
+
+            double HA = AstroUtil.GetHourAngle(LST, AstroUtil.DegreesToHours(ra));
+
+            double HADeg = AstroUtil.HoursToDegrees(HA);
+
+            double alt = AstroUtil.GetAltitude(HADeg, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude, dec);
+            double az = AstroUtil.GetAzimuth(HADeg, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude, dec);
+
+            double[] altaz = new double[2];
+            altaz[0] = alt;
+            altaz[1] = az;
+
+            return altaz;
+        }
+
         private bool isNeverVisible(double dec) {
             bool nv = false;
             double lat = Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude;
@@ -305,6 +349,34 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             double halt = Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Horizon.GetAltitude(altaz[1]);
 
             return altaz[0] > Astrocolibri.AstroColibriOptions.MinAltitude && altaz[0] > halt;
+        }
+
+        private void makeVisible(DeepSkyObject dso) {
+            double LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
+            double ra = AstroUtil.HoursToDegrees(LST);
+            double dec = 0.0; // mus be better
+            dso.Coordinates = new Coordinates(ra, dec, Epoch.J2000, Coordinates.RAType.Degrees);
+        }
+
+        private void makeInvisible(DeepSkyObject dso) {
+            double LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
+            double ra = AstroUtil.EuclidianModulus(AstroUtil.HoursToDegrees(LST) + 180, 360);
+            double dec = 0.0;
+            dso.Coordinates = new Coordinates(ra, dec, Epoch.J2000, Coordinates.RAType.Degrees);
+        }
+
+        private void makeNeverVisible(DeepSkyObject dso) {
+            double lat = Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude;
+            double minalt = Astrocolibri.AstroColibriOptions.MinAltitude;
+            double dec = 0.0;
+            double ra = dso.Coordinates.RADegrees;
+
+            if (lat > 0)
+                dec = lat - 90.0 + minalt - 1.0;
+            else
+                dec = lat + 90 - minalt + 1.0;
+
+            dso.Coordinates = new Coordinates(ra, dec, Epoch.J2000, Coordinates.RAType.Degrees);
         }
     }
 }
