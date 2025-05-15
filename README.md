@@ -29,16 +29,14 @@ Note however, that there is always a delay between the actual event in the sky a
 	+ A minimum altitude in degrees, which will provide an additional filter for evaluating an event as "visible".
 - Add an "Astrocolibri Trigger" to your imaging sequence.
 - Run the sequence ...
-- The sequence will check for new event after each image recorded, but not more frequenly than specified by the according paramter above.
-
+- The sequence will check for new event after each image recorded, but not more frequenly than specified by the according paramter above.  
 Once events are recorded, data and visibilty charts for these events are shown in a dockable in the "Image" tab named "Altitude Charts for Astro-COLIBRI Events".
 Each event has a button on the left side next to the event source name, which allows to send the coordinates of the event source to the framing assistant.
 New subsequent events are inserted on the top of the "Altitude Charts for Astro-COLIBRI Events".
 The list of events is cleared, when you quit NINA.
 
 - Add an "AstroColibri Condition" into an existing loop. It will trigger as soon as the "AstroColibri Trigger" has detected a visible Event. The user is free to define whatever should happen, after leaving the loop.
-- Add an "AstroColibri Instruction" directly after a loop containing a "AstroColibri Trigger" and an "AstroColibri Condition". Specify a DSO Sequence Template in the instruction. When loading the sequence the Default DSO Template will be inserted from the plugin options page.
-
+- Add an "AstroColibri Instruction" directly after a loop containing a "AstroColibri Trigger" and an "AstroColibri Condition". Specify a DSO Sequence Template in the instruction. When loading the sequence the Default DSO Template will be inserted from the plugin options page.  
 Once the "AstroColibri Condition" triggers, the DSP Sequnce Template is appended to the current sequence after the "AstroColibri Instruction", the sequence is stopped and re-launched, so that it continues with the inserted DSO Sequence Template. 
 
 Have fun and be one of the first to image T CrB ... or some new supernovae with help of this plugin. 
