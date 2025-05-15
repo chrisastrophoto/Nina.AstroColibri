@@ -15,7 +15,7 @@
 	- New Plugin Parameters  
 		- Default DSO Template  
 		This is the default DSO Sequnece Template which is loaded into the AstroColibri instruction when the sequence is loaded.
-		- A Test switch  
+		- Test switch  
 		When this switch is active, each exposure triggers a simulated request to Astro-Colibri, which returns a visible, an invisible and a never visible target and the AstroColibri Condtion triggers immediately.  
 		  Note that in test mode the links diplayed in the dockable in the image tab do not correspond to the simulated response. These are links to some arbitrary but real events from the past.
 	
