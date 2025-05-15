@@ -105,7 +105,7 @@
                     Width="300"
                     VerticalAlignment="Center"
                     DockPanel.Dock="Left"
-                    Text="DSO Template" />
+                    Text="Default DSO Template" />
                 <TextBox
                     MinWidth="75"
                     MaxWidth="700"

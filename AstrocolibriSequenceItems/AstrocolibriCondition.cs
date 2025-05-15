@@ -74,16 +74,10 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         ///     - IList<IDateTimeProvider>
         /// </remarks>
         [ImportingConstructor]
-        public AstrocolibriCondition(IProfileService profileService, IApplicationMediator applicationMediator, ISequenceMediator sequenceMediator) {
+        public AstrocolibriCondition() {
             HasNoTransient = true;
-            SequenceMediator = sequenceMediator;
-            ProfileService = profileService;
-            ApplicationMediator = applicationMediator;
         }
 
-        public IProfileService ProfileService { get; set; }
-        public IApplicationMediator ApplicationMediator { get; set; }
-        public ISequenceMediator SequenceMediator { get; set; }
         private bool hasNoTransient;
 
         [JsonProperty]
@@ -109,21 +103,12 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
                     Notification.CloseAll();
                 });
             }
-            if (!hasNoTransient) {
-                AddDSOSequence(Astrocolibri.API.LatestTransient);
-                Astrocolibri.API.HasNoTransient = true;
 
-                // This is not solvable: This works with only one smart exposure in a loop or with normal take exposure in Loops
-                // If there are more than one smart exposure and the trigger was trigegred in the first snmart exposure, the relauch always continues on the second smart exposure which is not yet marked as done. So it triggers again!
-                // This problem arises from the fact, that the inserted DSO template comes after all smart exposures in the 1 loop which is necessary to prevent the astrocolibri condition let the loop run indefinively ...
-
-                // When implementing the AddDSOSequence in the trigger. It seemed to work somehow. But then I had trouble on restarting after stopping the seqence manually.
-            }
             return HasNoTransient;
         }
 
         public override object Clone() {
-            return new AstrocolibriCondition(ProfileService, ApplicationMediator, SequenceMediator) {
+            return new AstrocolibriCondition() {
                 Icon = Icon,
                 Name = Name,
                 Category = Category,
@@ -137,47 +122,6 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         /// <returns></returns>
         public override string ToString() {
             return $"Category: {Category}, Item: {nameof(AstrocolibriCondition)}, HasNoTransient: {HasNoTransient}";
-        }
-
-        private void AddDSOSequence(DeepSkyObject dso) {
-            ApplicationMediator.ChangeTab(ApplicationTab.SEQUENCE);
-            Task.Run(async () => {
-                // This is needed for the tab to start loading and the virtualizing stack panel to allocate proper space. otherwise we run into problems
-                await Task.Delay(100);
-
-                IList<IDeepSkyObjectContainer> DSOTemplates = SequenceMediator.GetDeepSkyObjectContainerTemplates();
-                IDeepSkyObjectContainer container = null;
-                string dsoTemplateName = Astrocolibri.AstroColibriOptions.DsoTemplate;
-                foreach (IDeepSkyObjectContainer c in DSOTemplates)
-                    if (c.Name == dsoTemplateName) {
-                        container = (IDeepSkyObjectContainer)c.Clone();
-                        break;
-                    }
-                if (container != null) {
-                    InputTarget it = new InputTarget(Angle.ByDegree(ProfileService.ActiveProfile.AstrometrySettings.Latitude), Angle.ByDegree(ProfileService.ActiveProfile.AstrometrySettings.Longitude), ProfileService.ActiveProfile.AstrometrySettings.Horizon) {
-                        InputCoordinates = new InputCoordinates(dso.Coordinates),
-                        TargetName = (dso.Name == null || dso.Name == "") ? "NoName" : dso.Name
-                    };
-                    container.Target = it;
-                    container.Name = (dso.Name == null || dso.Name == "") ? "NoName" : dso.Name;
-                    await Application.Current.Dispatcher.BeginInvoke(() => {
-                        Logger.Info("Adding target " + dso.Name + "to advanced sequencer: {container.Target.DeepSkyObject.Name} - {container.Target.DeepSkyObject.Coordinates}");
-                        SequenceMediator.AddAdvancedTarget(container);
-                    });
-                    SequenceMediator.CancelAdvancedSequence();
-
-                    while (SequenceMediator.IsAdvancedSequenceRunning()) {
-                        await Task.Delay(100);
-                    }
-                    await Application.Current.Dispatcher.BeginInvoke(async () => {
-                        Logger.Info("Relaunching Sequencer");
-                        await SequenceMediator.StartAdvancedSequence(true);
-                    });
-                } else {
-                    Notification.ShowInformation("DSO Template " + dsoTemplateName + " not found");
-                    Logger.Info("DSO Template " + dsoTemplateName + " not found");
-                }
-            });
         }
     }
 }

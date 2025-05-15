@@ -33,14 +33,11 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
     public class AstrocolibriTrigger : SequenceTrigger {
 
         [ImportingConstructor]
-        public AstrocolibriTrigger(IProfileService profileService, IApplicationMediator applicationMediator, ISequenceMediator sequenceMediator) : base() {
-            SequenceMediator = sequenceMediator;
-            ProfileService = profileService;
-            ApplicationMediator = applicationMediator;
+        public AstrocolibriTrigger() : base() {
         }
 
         public override object Clone() {
-            return new AstrocolibriTrigger(ProfileService, ApplicationMediator, SequenceMediator) {
+            return new AstrocolibriTrigger() {
                 Icon = Icon,
                 Name = Name,
                 Category = Category,
@@ -48,15 +45,9 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
             };
         }
 
-        public ISequenceMediator SequenceMediator { get; set; }
-        public IProfileService ProfileService { get; set; }
-        public IApplicationMediator ApplicationMediator { get; set; }
-
         public override Task Execute(ISequenceContainer context, IProgress<ApplicationStatus> progress, CancellationToken token) {
             Astrocolibri.API.LatestTransients();
-            //if (!Astrocolibri.API.HasNoTransient && Astrocolibri.API.LatestTransient != null) {
-            //    AddDSOSequence(Astrocolibri.API.LatestTransient);
-            //}
+
             return Task.CompletedTask;
         }
 
@@ -75,46 +66,6 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
 
         public override string ToString() {
             return $"Category: {Category}, Item: {nameof(AstrocolibriTrigger)}";
-        }
-
-        private void AddDSOSequence(DeepSkyObject dso) {
-            ApplicationMediator.ChangeTab(ApplicationTab.SEQUENCE);
-            Task.Run(async () => {
-                // This is needed for the tab to start loading and the virtualizing stack panel to allocate proper space. otherwise we run into problems
-                await Task.Delay(100);
-
-                IList<IDeepSkyObjectContainer> DSOTemplates = SequenceMediator.GetDeepSkyObjectContainerTemplates();
-                IDeepSkyObjectContainer container = null;
-                string dsoTemplateName = Astrocolibri.AstroColibriOptions.DsoTemplate;
-                foreach (IDeepSkyObjectContainer c in DSOTemplates)
-                    if (c.Name == dsoTemplateName) {
-                        container = (IDeepSkyObjectContainer)c.Clone();
-                        break;
-                    }
-                if (container != null) {
-                    InputTarget it = new InputTarget(Angle.ByDegree(ProfileService.ActiveProfile.AstrometrySettings.Latitude), Angle.ByDegree(ProfileService.ActiveProfile.AstrometrySettings.Longitude), ProfileService.ActiveProfile.AstrometrySettings.Horizon) {
-                        InputCoordinates = new InputCoordinates(dso.Coordinates),
-                        TargetName = (dso.Name == null || dso.Name == "") ? "NoName" : dso.Name
-                    };
-                    container.Target = it;
-                    container.Name = (dso.Name == null || dso.Name == "") ? "NoName" : dso.Name;
-                    await Application.Current.Dispatcher.BeginInvoke(() => {
-                        Logger.Info($"Adding target " + dso.Name + "to advanced sequencer: {container.Target.DeepSkyObject.Name} - {container.Target.DeepSkyObject.Coordinates}");
-                        SequenceMediator.AddAdvancedTarget(container);
-                    });
-                    SequenceMediator.CancelAdvancedSequence();
-                    while (SequenceMediator.IsAdvancedSequenceRunning()) {
-                        await Task.Delay(100);
-                    }
-                    await Application.Current.Dispatcher.BeginInvoke(() => {
-                        Logger.Info($"Relaunching Sequencer");
-                        SequenceMediator.StartAdvancedSequence(true);
-                    });
-                } else {
-                    Notification.ShowInformation("DSO Template " + dsoTemplateName + " not found");
-                    Logger.Info("DSO Template " + dsoTemplateName + " not found");
-                }
-            });
         }
     }
 }

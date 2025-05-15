@@ -121,7 +121,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AstroColibri")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string DSOTemplate {
             get {
                 return ((string)(this["DSOTemplate"]));
