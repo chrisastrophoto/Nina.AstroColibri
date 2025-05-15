@@ -24,7 +24,7 @@ using NINA.Sequencer.Utility;
 
 namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
 
-    [ExportMetadata("Name", "Astrocolibri Trigger")]
+    [ExportMetadata("Name", "AstroColibri Trigger")]
     [ExportMetadata("Description", "This trigger will check for new transients on Astro-COLIBRI")]
     [ExportMetadata("Icon", "Astrocolibri_SVG")]
     [ExportMetadata("Category", "AstroColibri")]
