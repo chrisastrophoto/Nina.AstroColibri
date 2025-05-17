@@ -7,8 +7,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("1.0.0.2")]
-[assembly: AssemblyFileVersion("1.0.0.2")]
+[assembly: AssemblyVersion("1.1.0.1")]
+[assembly: AssemblyFileVersion("1.1.0.1")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("AstroColibri")]
@@ -57,6 +57,8 @@ This is a plugin which
 - informs the user on new events in Astro-Colibri (if visible from the current location)
 - shows altitude charts of all events in the current NINA session on a specific pane on the imaging tab
 - provides a button to send the object to the framing assistant
+- provides a condition, which you can insert into your sequence and which triggers, when a visible event is received
+- provides a sequence item, which inserts a Deep Sky Object sequence template into the sequence, when a visible event is received, and adds the target to the sequence template inserted
 
 The plugin is activated by adding the AstroColibri trigger to a sequence.
 The trigger condition is evaluated after each frame and as long as the sequence is running.

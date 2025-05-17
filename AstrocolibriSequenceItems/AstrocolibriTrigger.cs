@@ -1,17 +1,30 @@
 ﻿using Newtonsoft.Json;
+using NINA.Astrometry;
+using NINA.Core.Enum;
 using NINA.Core.Model;
 using NINA.Core.Utility;
+using NINA.Core.Utility.Notification;
+using NINA.Profile;
 using NINA.Sequencer.Container;
+using NINA.Sequencer.Mediator;
 using NINA.Sequencer.SequenceItem;
 using NINA.Sequencer.Trigger;
+using NINA.Sequencer.Interfaces.Mediator;
+using NINA.WPF.Base.Mediator;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using NINA.Profile.Interfaces;
+using NINA.WPF.Base.Interfaces.Mediator;
+using System.Security.Cryptography;
+using NINA.Sequencer.Utility;
 
 namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
 
-    [ExportMetadata("Name", "Astrocolibri Trigger")]
+    [ExportMetadata("Name", "AstroColibri Trigger")]
     [ExportMetadata("Description", "This trigger will check for new transients on Astro-COLIBRI")]
     [ExportMetadata("Icon", "Astrocolibri_SVG")]
     [ExportMetadata("Category", "AstroColibri")]
@@ -34,6 +47,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
 
         public override Task Execute(ISequenceContainer context, IProgress<ApplicationStatus> progress, CancellationToken token) {
             Astrocolibri.API.LatestTransients();
+
             return Task.CompletedTask;
         }
 
@@ -44,7 +58,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
         public override bool ShouldTriggerAfter(ISequenceItem previousItem, ISequenceItem nextItem) {
             string mes = "After >> " + (previousItem == null ? "" : (previousItem.Name + ":" + previousItem.Category)) + " --> " + (nextItem == null ? "" : (nextItem.Name + ":" + nextItem.Category)) + " <<";
             Logger.Info(mes);
-            if (previousItem != null && previousItem.Name.Equals("Take Exposure") && previousItem.Category.Equals("Camera")) {
+            if (previousItem != null && previousItem.Name != null && previousItem.Category != null && previousItem.Name.Equals("Take Exposure") && previousItem.Category.Equals("Camera")) {
                 return true;
             }
             return false;
