@@ -30,14 +30,22 @@ Note however, that there is always a delay between the actual event in the sky a
 - Add an "Astrocolibri Trigger" to your imaging sequence.
 - Run the sequence ...
 - The sequence will check for new event after each image recorded, but not more frequenly than specified by the according paramter above.  
-Once events are recorded, data and visibilty charts for these events are shown in a dockable in the "Image" tab named "Altitude Charts for Astro-COLIBRI Events".
+Once events are recorded, data and visibilty charts for these events are shown in a dockable in the "Image" tab named "Altitude Charts for Astro-COLIBRI Events" as long as the target is currently visible or might become visible later.
 Each event has a button on the left side next to the event source name, which allows to send the coordinates of the event source to the framing assistant.
 New subsequent events are inserted on the top of the "Altitude Charts for Astro-COLIBRI Events".
 The list of events is cleared, when you quit NINA.
 
-- Add an "AstroColibri Condition" into an existing loop. It will trigger as soon as the "AstroColibri Trigger" has detected a visible Event. The user is free to define whatever should happen, after leaving the loop.
-- Add an "AstroColibri Instruction" directly after a loop containing a "AstroColibri Trigger" and an "AstroColibri Condition". Specify a DSO Sequence Template in the instruction. When loading the sequence the Default DSO Template will be inserted from the plugin options page.  
-Once the "AstroColibri Condition" triggers, the DSP Sequnce Template is appended to the current sequence after the "AstroColibri Instruction", the sequence is stopped and re-launched, so that it continues with the inserted DSO Sequence Template. 
+- Optionlly add an "AstroColibri Condition" into an existing loop. It will trigger as soon as the "AstroColibri Trigger" has detected a visible Event. The user is free to define whatever should happen, after leaving the loop.  
+IMPORTANT: Add an additional Loop Condition, otherwise the instructions in the loop will eventually repeated forever ... until an event is received.
+- Optionally create a DSO Sequence Template which you want to be executed as soon as a visible event is received.  
+IMPORTANT: Do not forget to insert a "Slew & Center" instruction into this template ... otherwise you will not be happy with the result ... 
+- Add an "AstroColibri Instruction" directly after a loop containing a "AstroColibri Trigger" and an "AstroColibri Condition". Specify the DSO Sequence Template in this instruction, which you have created above.  
+On loading of the sequence the "Default DSO Template" specified in the plugin options will be inserted. You are free to overwrite the template to be loaded here.  
+Once the "AstroColibri Condition" triggers, the DSO Sequence Template is appended to the current sequence after the "AstroColibri Instruction", the target is inserted into this sequence template and finally the sequence is stopped and re-launched, so that it continues with the inserted DSO Sequence Template. 
+
+- We have added a "Test" switch, which simulates events detected on each exposure.  
+In test mode, no internet access is required. Three events are simulated: a visible event, an invisible event and a never visible event. You can use this feature to test your sequence. The links in the dockable for the displayed events are all pointing to the [Astro-Colibri Web Interface](https://astro-colibri.com/)
+
 
 Have fun and be one of the first to image T CrB ... or some new supernovae with help of this plugin. 
 

@@ -190,7 +190,9 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                         List<EventResponse> verl = (List<EventResponse>)ltr.voevents;
                         int i = 0;
                         foreach (EventResponse er in verl) {
-                            VoeventResponse ver = VoeventCall(er.trigger_id, now);
+                            VoeventResponse ver = null;
+                            if (!Astrocolibri.AstroColibriOptions.TestMode)
+                                ver = VoeventCall(er.trigger_id, now);
                             string err = er.err + " " + "deg";
                             if (err == "None deg" || err == "-1.0 deg")
                                 if (ver != null) {
@@ -207,7 +209,10 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                             double dec = er.dec;
                             double ra = er.ra;
                             //VisibilityPlotResponse vis = VisibilityPlot(er, now);
-                            VisibilityPlotDetailedResponse visDet = VisibilityPlotDetailed(er, now);
+
+                            VisibilityPlotDetailedResponse visDet = null;
+                            if (!Astrocolibri.AstroColibriOptions.TestMode)
+                                visDet = VisibilityPlotDetailed(er, now);
                             DeepSkyObject dso = new DeepSkyObject(er.trigger_id, new Coordinates(er.ra, er.dec, Epoch.J2000, Coordinates.RAType.Degrees), "", Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Horizon);
                             dso.Name = er.source_name;
                             if (Astrocolibri.AstroColibriOptions.TestMode) {
@@ -245,9 +250,14 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                                     Notification.ShowInformation("Event " + er.source_name + " is currently not visible: Altidude now: " + alt, new TimeSpan(0, 10, 0, 0));
                                     Logger.Info("Event " + er.source_name + " is currently not visible: Altitude now:" + alt);
                                 }
-                                System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
-                                    ACEvents.Insert(i, new AstroColibriEvent(dso, er.trigger_id, visDet.img_url, visDet.results_url, er.url, er.event_url, er.classification, er.type, er.alert_type, er.time, er.transient_flux, er.transient_flux_units, err));
-                                });
+                                if (Astrocolibri.AstroColibriOptions.TestMode)
+                                    System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
+                                        ACEvents.Insert(i, new AstroColibriEvent(dso, er.trigger_id, Astrocolibri.AstroColibriOptions.WebUrl, Astrocolibri.AstroColibriOptions.WebUrl, Astrocolibri.AstroColibriOptions.WebUrl, Astrocolibri.AstroColibriOptions.WebUrl, er.classification, er.type, er.alert_type, er.time, er.transient_flux, er.transient_flux_units, err));
+                                    });
+                                else
+                                    System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
+                                        ACEvents.Insert(i, new AstroColibriEvent(dso, er.trigger_id, visDet.img_url, visDet.results_url, er.url, er.event_url, er.classification, er.type, er.alert_type, er.time, er.transient_flux, er.transient_flux_units, err));
+                                    });
                                 i++;
                             }
                         }

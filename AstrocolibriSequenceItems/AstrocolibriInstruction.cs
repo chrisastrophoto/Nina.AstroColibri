@@ -31,7 +31,9 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
     [ExportMetadata("Category", "AstroColibri")]
     [Export(typeof(ISequenceItem))]
     [JsonObject(MemberSerialization.OptIn)]
-    public class AstrocolibriInstruction : SequenceItem, INotifyPropertyChanged {
+    public class AstrocolibriInstruction : SequenceItem {
+
+        [JsonProperty]
         private string dsoTemplate { get; set; }
 
         public string DSOTemplate {
@@ -46,7 +48,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
             ProfileService = profileService;
             ApplicationMediator = applicationMediator;
             SequenceMediator = sequenceMediator;
-            DSOTemplate = Astrocolibri.AstroColibriOptions.DsoTemplate;
+            DSOTemplate ??= Astrocolibri.AstroColibriOptions.DsoTemplate;
         }
 
         public AstrocolibriInstruction(IProfileService profileService, IApplicationMediator applicationMediator, ISequenceMediator sequenceMediator, AstrocolibriInstruction copyMe) : this(profileService, applicationMediator, sequenceMediator) {

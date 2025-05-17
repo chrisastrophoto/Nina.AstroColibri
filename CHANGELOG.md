@@ -5,6 +5,8 @@
 	- Correct calculation of "Never visible"
 
 - New Features:
+	- Include custom horizon in visibility calculation
+
 	- New AstroColibri Loop Condition  
 	  The condition triggers, if a visible event has been detected by the trigger. 
 	  The sequence continues with whatever is defined after the loop.
@@ -17,7 +19,7 @@
 		This is the default DSO Sequnece Template which is loaded into the AstroColibri instruction when the sequence is loaded.
 		- Test switch  
 		When this switch is active, each exposure triggers a simulated request to Astro-Colibri, which returns a visible, an invisible and a never visible target and the AstroColibri Condtion triggers immediately.  
-		  Note that in test mode the links diplayed in the dockable in the image tab do not correspond to the simulated response. These are links to some arbitrary but real events from the past.
+		Note that in test mode the links diplayed in the dockable in the image tab do all point to the [Astro-Colibri Web Interface](https://astro-colibri.com/). These are links to some arbitrary but real events from the past.
 	
 		
 		
