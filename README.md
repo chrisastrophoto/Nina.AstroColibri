@@ -30,7 +30,7 @@ Note however, that there is always a delay between the actual event in the sky a
 - Add an "Astrocolibri Trigger" to your imaging sequence.
 - Run the sequence ...
 - The sequence will check for new event after each image recorded, but not more frequenly than specified by the according paramter above.  
-Once events are recorded, data and visibilty charts for these events are shown in a dockable in the "Image" tab named "Altitude Charts for Astro-COLIBRI Events" as long as the target is currently visible or might become visible later.
+Once events are recorded, data and visibilty charts for these events are shown in a dockable in the "Image" tab named "Altitude Charts for Astro-COLIBRI Events" as long as the target is currently visible or might become visible after start of nautical dawn in the evening and before nautical down in the morning. 
 Each event has a button on the left side next to the event source name, which allows to send the coordinates of the event source to the framing assistant.
 New subsequent events are inserted on the top of the "Altitude Charts for Astro-COLIBRI Events".
 The list of events is cleared, when you quit NINA.
@@ -42,6 +42,9 @@ IMPORTANT: Do not forget to insert a "Slew & Center" instruction into this templ
 - Add an "AstroColibri Instruction" directly after a loop containing a "AstroColibri Trigger" and an "AstroColibri Condition". Specify the DSO Sequence Template in this instruction, which you have created above.  
 On loading of the sequence the "Default DSO Template" specified in the plugin options will be inserted. You are free to overwrite the template to be loaded here.  
 Once the "AstroColibri Condition" triggers, the DSO Sequence Template is appended to the current sequence after the "AstroColibri Instruction", the target is inserted into this sequence template and finally the sequence is stopped and re-launched, so that it continues with the inserted DSO Sequence Template. 
+If the switch "Save automatically" is set to ON, the sequence will be saved automatically after the DSO template has been inserted and the target of the DSO template has been updated. 
+In that case the original sequence is overwritten without notice! 
+If no AstroColibri instruction is used or the DSO template is not found, the sequence will NOT be saved automatically.
 
 - We have added a "Test" switch, which simulates events detected on each exposure.  
 In test mode, no internet access is required. Three events are simulated: a visible event, an invisible event and a never visible event. You can use this feature to test your sequence. The links in the dockable for the displayed events are all pointing to the [Astro-Colibri Web Interface](https://astro-colibri.com/)
@@ -49,7 +52,7 @@ In test mode, no internet access is required. Three events are simulated: a visi
 
 Have fun and be one of the first to image T CrB ... or some new supernovae with help of this plugin. 
 
-Christoph Nieswand, May 2025
+Christoph Nieswand, June 2025
 
 
 

@@ -1,5 +1,17 @@
 ﻿# AstroColibri
 
+## 1.2.0.1
+
+- New Features:
+	- Events are shown in the dockable only, if they are above horizon and above minimum altitude after start of nautical dawn in the evening and before nautical down in the morning or if they are currently visible. 
+	  The test cases behave as before. As a result the test case "Visble Target" may be shown or not, depending on the time when you execute the test run.
+	
+	- The visibility ("Visble now" or "Visible at night") is shown as a new line on the dockable in the image tab.
+
+	- If the new switch "Save automatically" is set to ON, the sequence will be saved automatically, if the AstroColibri instruction is used and after the DSO template has been inserted and the target of the DSO template has been updated. 
+	  In that case the original sequence is overwritten without notice! 
+	  If no AstroColibri instruction is used or the DSO template is not found, the sequence will NOT be saved automatically.
+
 ## 1.1.0.1
 - Fixes:
 	- Correct calculation of "Never visible"

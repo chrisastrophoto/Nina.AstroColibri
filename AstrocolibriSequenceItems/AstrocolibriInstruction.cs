@@ -1,21 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using Accord.IO;
+using Newtonsoft.Json;
 using NINA.Astrometry;
 using NINA.Core.Enum;
 using NINA.Core.Model;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
-using NINA.Profile;
 using NINA.Profile.Interfaces;
+using NINA.Sequencer;
 using NINA.Sequencer.Container;
 using NINA.Sequencer.Interfaces.Mediator;
-using NINA.Sequencer.Mediator;
 using NINA.Sequencer.SequenceItem;
+using NINA.ViewModel.Sequencer;
 using NINA.WPF.Base.Interfaces.Mediator;
 using NINA.WPF.Base.Mediator;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -34,11 +36,11 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
     public class AstrocolibriInstruction : SequenceItem {
 
         [JsonProperty]
-        private string dsoTemplate { get; set; }
+        private string DsoTemplate { get; set; }
 
         public string DSOTemplate {
-            get => dsoTemplate; set {
-                dsoTemplate = value;
+            get => DsoTemplate; set {
+                DsoTemplate = value;
                 RaisePropertyChanged();
             }
         }
@@ -114,6 +116,14 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
                         Logger.Info("Relaunching Sequencer");
                         await SequenceMediator.StartAdvancedSequence(true);
                     });
+                    if (Astrocolibri.AstroColibriOptions.SaveSequence) {
+                        IList<IDeepSkyObjectContainer> cl = SequenceMediator.GetAllTargetsInAdvancedSequence();
+                        ISequenceContainer oc = cl[0];
+                        while (oc.Parent != null)
+                            oc = oc.Parent;
+                        string savePath = SequenceMediator.GetAdvancedSequencerSavePath();
+                        await SequenceMediator.SaveContainer(oc, savePath, new CancellationToken());
+                    }
                 } else {
                     Notification.ShowInformation("DSO Template " + DSOTemplate + " not found");
                     Logger.Info("DSO Template " + DSOTemplate + " not found");
