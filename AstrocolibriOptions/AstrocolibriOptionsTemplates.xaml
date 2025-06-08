@@ -119,6 +119,20 @@
                     Width="300"
                     VerticalAlignment="Center"
                     DockPanel.Dock="Left"
+                    Text="Save Sequence automatically" />
+                <CheckBox
+                    MinWidth="75"
+                    MaxWidth="700"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding AstroColibriOptions.SaveSequence}" />
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="False">
+                <TextBlock
+                    Width="300"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
                     Text="Test Mode" />
                 <CheckBox
                     MinWidth="75"

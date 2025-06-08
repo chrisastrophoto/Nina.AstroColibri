@@ -142,5 +142,17 @@ namespace ChristophNieswand.NINA.Astrocolibri.Properties {
                 this["Testmode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SaveSequence {
+            get {
+                return ((bool)(this["SaveSequence"]));
+            }
+            set {
+                this["SaveSequence"] = value;
+            }
+        }
     }
 }

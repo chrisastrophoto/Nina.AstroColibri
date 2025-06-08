@@ -7,8 +7,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("1.1.0.1")]
-[assembly: AssemblyFileVersion("1.1.0.1")]
+[assembly: AssemblyVersion("1.2.0.1")]
+[assembly: AssemblyFileVersion("1.2.0.1")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("AstroColibri")]
@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © 2025 Christoph Nieswand")]
 
 // The minimum Version of N.I.N.A. that this plugin is compatible with
-[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.0.0.2017")]
+[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.1.2.9001")]
 
 // The license your plugin code is using
 [assembly: AssemblyMetadata("License", "MPL-2.0")]
@@ -58,7 +58,9 @@ This is a plugin which
 - shows altitude charts of all events in the current NINA session on a specific pane on the imaging tab
 - provides a button to send the object to the framing assistant
 - provides a condition, which you can insert into your sequence and which triggers, when a visible event is received
-- provides a sequence item, which inserts a Deep Sky Object sequence template into the sequence, when a visible event is received, and adds the target to the sequence template inserted
+- provides an instruction, which inserts a Deep Sky Object sequence template into the sequence, when a visible event is received, and adds the target to the sequence template inserted
+- provides a switch to activate automatic save of the sequence after insertion of Deep Sky Object sequence template
+- provides a test mode to simulate detection of events
 
 The plugin is activated by adding the AstroColibri trigger to a sequence.
 The trigger condition is evaluated after each frame and as long as the sequence is running.

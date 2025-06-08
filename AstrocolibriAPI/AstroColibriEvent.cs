@@ -9,7 +9,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             DSO = _dso;
         }
 
-        public AstroColibriEvent(DeepSkyObject _dso, string trigger_id, string img_url, string results_url, string url, string event_url, string classification, string type, string alert_type, string time, string transient_flux, string transient_flux_units, string error) {
+        public AstroColibriEvent(DeepSkyObject _dso, string trigger_id, string img_url, string results_url, string url, string event_url, string classification, string type, string alert_type, string time, string transient_flux, string transient_flux_units, string error, string visibility) {
             DSO = _dso;
             Trigger_id = trigger_id;
             Img_url = img_url == "" || img_url == "" ? null : new Uri(img_url);
@@ -23,6 +23,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             Transient_flux_units = transient_flux_units;
             Transient_flux = transient_flux_units == "" ? "" : transient_flux + " " + transient_flux_units;
             Error = error;
+            Visibility = visibility;
         }
 
         private string trigger_id;
@@ -126,6 +127,14 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
         public string Error {
             get => error; set {
                 error = value;
+            }
+        }
+
+        private string visibility;
+
+        public string Visibility {
+            get => visibility; set {
+                visibility = value;
             }
         }
     }

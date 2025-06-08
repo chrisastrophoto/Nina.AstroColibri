@@ -58,6 +58,7 @@ namespace ChristophNieswand.NINA.Astrocolibri {
             RaisePropertyChanged(nameof(AstroColibriOptions.KeepFilesDays));
             RaisePropertyChanged(nameof(AstroColibriOptions.MinAltitude));
             RaisePropertyChanged(nameof(AstroColibriOptions.TestMode));
+            RaisePropertyChanged(nameof(AstroColibriOptions.SaveSequence));
             RaisePropertyChanged(nameof(AstroColibriOptions.DsoTemplate));
         }
 

@@ -35,6 +35,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriOptions {
             keepFilesDays = optionsAccessor.GetValueInt32(nameof(KeepFilesDays), Properties.Settings.Default.KeepFilesDays);
             minAltitude = optionsAccessor.GetValueDouble(nameof(MinAltitude), Properties.Settings.Default.MinAltitude);
             testMode = optionsAccessor.GetValueBoolean(nameof(TestMode), Properties.Settings.Default.Testmode);
+            saveSequence = optionsAccessor.GetValueBoolean(nameof(SaveSequence), Properties.Settings.Default.SaveSequence);
             dsoTemplate = optionsAccessor.GetValueString(nameof(DsoTemplate), Properties.Settings.Default.DSOTemplate);
         }
 
@@ -159,6 +160,20 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriOptions {
                     Logger.Debug($"Set Testmode={value}");
                     testMode = value;
                     optionsAccessor.SetValueBoolean(nameof(TestMode), testMode);
+                    ac.RaisePropertyChanged();
+                }
+            }
+        }
+
+        private bool saveSequence;
+
+        public bool SaveSequence {
+            get => saveSequence;
+            set {
+                if (saveSequence != value) {
+                    Logger.Debug($"Set SaveSequence={value}");
+                    saveSequence = value;
+                    optionsAccessor.SetValueBoolean(nameof(SaveSequence), saveSequence);
                     ac.RaisePropertyChanged();
                 }
             }

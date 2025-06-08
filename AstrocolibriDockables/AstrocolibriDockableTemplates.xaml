@@ -38,6 +38,7 @@
                                     <RowDefinition Height="20" />
                                     <RowDefinition Height="20" />
                                     <RowDefinition Height="20" />
+                                    <RowDefinition Height="20" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
@@ -100,7 +101,7 @@
                                     Text="{Binding DSO.Coordinates.RAString}" />
                                 <Grid
                                     Grid.Row="1"
-                                    Grid.RowSpan="12"
+                                    Grid.RowSpan="13"
                                     Grid.Column="3">
                                     <Grid.Resources>
                                         <util:BindingProxy x:Key="nighttimeProxy" Data="{Binding DataContext.NighttimeData, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}, AncestorLevel=1}}" />
@@ -242,6 +243,21 @@
                                     Text="{Binding Transient_flux}" />
                                 <TextBlock
                                     Grid.Row="10"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Height="20"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Text="Visibility:" />
+                                <TextBlock
+                                    Grid.Row="10"
+                                    Grid.Column="2"
+                                    Height="20"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Text="{Binding Visibility}" />
+                                <TextBlock
+                                    Grid.Row="11"
                                     Grid.ColumnSpan="3"
                                     Height="20"
                                     HorizontalAlignment="Left"
@@ -252,7 +268,7 @@
                                     </Hyperlink>
                                 </TextBlock>
                                 <TextBlock
-                                    Grid.Row="11"
+                                    Grid.Row="12"
                                     Grid.ColumnSpan="3"
                                     Height="20"
                                     HorizontalAlignment="Left"
@@ -263,7 +279,7 @@
                                     </Hyperlink>
                                 </TextBlock>
                                 <TextBlock
-                                    Grid.Row="12"
+                                    Grid.Row="13"
                                     Grid.ColumnSpan="3"
                                     Height="20"
                                     HorizontalAlignment="Left"

@@ -7,13 +7,14 @@ using NINA.Core.Utility.Http;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
 using NINA.Astrometry;
-using NINA.Core.Model;
+using NINA.Astrometry.RiseAndSet;
 using System.Windows.Input;
 using System.Reflection;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Diagnostics.Eventing.Reader;
+using OxyPlot.Axes;
 
 namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
@@ -218,15 +219,15 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                             if (Astrocolibri.AstroColibriOptions.TestMode) {
                                 switch (er.source_name) {
                                     case "Visible Target":
-                                        makeVisible(dso);
+                                        MakeVisibleNow(dso);
                                         break;
 
                                     case "Invisible Target":
-                                        makeInvisible(dso);
+                                        MakeInvisible(dso);
                                         break;
 
                                     case "Never visible Target":
-                                        makeNeverVisible(dso);
+                                        MakeNeverVisible(dso);
                                         break;
 
                                     default:
@@ -237,28 +238,28 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                             }
                             double[] altaz = GetAltitude(ra, dec);
                             double alt = altaz[0];
-                            if (isNeverVisible(dec)) {
+                            if (IsNeverVisible(dec)) {
                                 Notification.ShowSuccess("Event " + er.source_name + " is NEVER visible and will be ignored! Declination: " + dec);
                                 Logger.Info("Event " + er.source_name + " is NEVER visible and will be ignored! Declination: " + dec);
                             } else {
-                                if (isVisibleNow(altaz)) {
+                                if (IsVisibleNow(altaz)) {
                                     Notification.ShowWarning("Event " + er.source_name + " is visible! Altidude now: " + alt, new TimeSpan(0, 10, 0, 0));
                                     Logger.Info("Event " + er.source_name + " is visible! Altitude now:" + alt);
+                                    InsertEvent(i, dso, er, visDet, err, "Visible now");
+                                    i++;
                                     LatestTransient = dso;
                                     HasNoTransient = false;
                                 } else {
-                                    Notification.ShowInformation("Event " + er.source_name + " is currently not visible: Altidude now: " + alt, new TimeSpan(0, 10, 0, 0));
-                                    Logger.Info("Event " + er.source_name + " is currently not visible: Altitude now:" + alt);
+                                    if (IsVisibleAtNight(dso)) {
+                                        Notification.ShowInformation("Event " + er.source_name + " is currently not visible, but becomes visible during nighttime: Altidude now: " + alt, new TimeSpan(0, 10, 0, 0));
+                                        Logger.Info("Event " + er.source_name + " is currently not visible, but becomes visible during nighttime: Altitude now:" + alt);
+                                        InsertEvent(i, dso, er, visDet, err, "Visible at night");
+                                        i++;
+                                    } else {
+                                        Notification.ShowSuccess("Event " + er.source_name + " is currently not visible and is visible only during daytime: Altidude now: " + alt);
+                                        Logger.Info("Event " + er.source_name + " is currently not visible and is visible only during daytime: Altitude now:" + alt);
+                                    }
                                 }
-                                if (Astrocolibri.AstroColibriOptions.TestMode)
-                                    System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
-                                        ACEvents.Insert(i, new AstroColibriEvent(dso, er.trigger_id, Astrocolibri.AstroColibriOptions.WebUrl, Astrocolibri.AstroColibriOptions.WebUrl, Astrocolibri.AstroColibriOptions.WebUrl, Astrocolibri.AstroColibriOptions.WebUrl, er.classification, er.type, er.alert_type, er.time, er.transient_flux, er.transient_flux_units, err));
-                                    });
-                                else
-                                    System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
-                                        ACEvents.Insert(i, new AstroColibriEvent(dso, er.trigger_id, visDet.img_url, visDet.results_url, er.url, er.event_url, er.classification, er.type, er.alert_type, er.time, er.transient_flux, er.transient_flux_units, err));
-                                    });
-                                i++;
                             }
                         }
                         Astrocolibri.AstroColibriDockable.UpdateTargetInfo();
@@ -271,6 +272,17 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                 }
             }
             return;
+        }
+
+        private void InsertEvent(int i, DeepSkyObject dso, EventResponse er, VisibilityPlotDetailedResponse visDet, string err, string visibility) {
+            if (Astrocolibri.AstroColibriOptions.TestMode)
+                System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
+                    ACEvents.Insert(i, new AstroColibriEvent(dso, er.trigger_id, Astrocolibri.AstroColibriOptions.WebUrl, Astrocolibri.AstroColibriOptions.WebUrl, Astrocolibri.AstroColibriOptions.WebUrl, Astrocolibri.AstroColibriOptions.WebUrl, er.classification, er.type, er.alert_type, er.time, er.transient_flux, er.transient_flux_units, err, visibility));
+                });
+            else
+                System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
+                    ACEvents.Insert(i, new AstroColibriEvent(dso, er.trigger_id, visDet.img_url, visDet.results_url, er.url, er.event_url, er.classification, er.type, er.alert_type, er.time, er.transient_flux, er.transient_flux_units, err, visibility));
+                });
         }
 
         private void DoLatestTransients() {
@@ -288,7 +300,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             File.WriteAllText(Path.Combine(Astrocolibri.AstroColibriOptions.JSONFilePath, name + ".json"), resp);
         }
 
-        private string ReadEventFromFile(string name) {
+        private static string ReadEventFromFile(string name) {
             return File.ReadAllText(Path.Combine(Astrocolibri.AstroColibriOptions.JSONFilePath, name));
         }
 
@@ -304,11 +316,17 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             return json;
         }
 
-        private double[] GetAltitude(double ra, double dec) {
-            DateTime now = DateTime.Now;
+        private static double[] GetAltitude(double ra, double dec) {
+            return GetAltitude(ra, dec, null);
+        }
 
-            double LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
-
+        private static double[] GetAltitude(double ra, double dec, DateTime? dt) {
+            double LST;
+            if (dt != null) {
+                LST = AstroUtil.GetLocalSiderealTime((DateTime)dt, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
+            } else {
+                LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
+            }
             double HA = AstroUtil.GetHourAngle(LST, AstroUtil.DegreesToHours(ra));
 
             double HADeg = AstroUtil.HoursToDegrees(HA);
@@ -323,7 +341,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             return altaz;
         }
 
-        private bool isNeverVisible(double dec) {
+        private static bool IsNeverVisible(double dec) {
             bool nv = false;
             double lat = Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude;
             double minalt = Astrocolibri.AstroColibriOptions.MinAltitude;
@@ -336,27 +354,60 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             return nv;
         }
 
-        private bool isVisibleNow(double[] altaz) {
+        private static bool IsVisibleNow(double[] altaz) {
             double halt = Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Horizon.GetAltitude(altaz[1]);
 
             return altaz[0] > Astrocolibri.AstroColibriOptions.MinAltitude && altaz[0] > halt;
         }
 
-        private void makeVisible(DeepSkyObject dso) {
+        private static bool IsVisibleAtNight(DeepSkyObject dso) {
+            // This should ideally return true, when the target is above horizon and above minalt at some time between start and end of nautical twilight
+
+            RiseAndSetEvent ev = AstroUtil.GetNauticalNightTimes(DateTime.Now, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude, Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
+
+            DateTime? start = ev.Set;
+            DateTime? end = ev.Rise;
+            if (start != null && end != null) {
+                double startd = DateTimeAxis.ToDouble(start);
+                double endd = DateTimeAxis.ToDouble(end);
+
+                List<OxyPlot.DataPoint> alts = dso.Altitudes;
+                List<OxyPlot.DataPoint> hor = dso.Horizon;
+                double minalt = Astrocolibri.AstroColibriOptions.MinAltitude;
+
+                List<OxyPlot.DataPoint>.Enumerator altenum = alts.GetEnumerator();
+                List<OxyPlot.DataPoint>.Enumerator horenum = hor.GetEnumerator();
+                OxyPlot.DataPoint altdp = altenum.Current;
+                OxyPlot.DataPoint hordp = horenum.Current;
+                // We ignore the first datapoint
+                while (altenum.MoveNext()) {
+                    horenum.MoveNext();
+                    altdp = altenum.Current;
+                    hordp = horenum.Current;
+                    if (altdp.X > startd && altdp.X < endd && altdp.Y > minalt && altdp.Y > hordp.Y) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static void MakeVisibleNow(DeepSkyObject dso) {
             double LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
             double ra = AstroUtil.HoursToDegrees(LST);
             double dec = 0.0; // mus be better
             dso.Coordinates = new Coordinates(ra, dec, Epoch.J2000, Coordinates.RAType.Degrees);
         }
 
-        private void makeInvisible(DeepSkyObject dso) {
+        private static void MakeInvisible(DeepSkyObject dso) {
+            // Might become visible during daytime or nighttime, depending on when you run the test
             double LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
             double ra = AstroUtil.EuclidianModulus(AstroUtil.HoursToDegrees(LST) + 180, 360);
             double dec = 0.0;
             dso.Coordinates = new Coordinates(ra, dec, Epoch.J2000, Coordinates.RAType.Degrees);
         }
 
-        private void makeNeverVisible(DeepSkyObject dso) {
+        private static void MakeNeverVisible(DeepSkyObject dso) {
             double lat = Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Latitude;
             double minalt = Astrocolibri.AstroColibriOptions.MinAltitude;
             double dec = 0.0;
