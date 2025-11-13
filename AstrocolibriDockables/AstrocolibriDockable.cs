@@ -18,6 +18,18 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables {
     public class AstrocolibriDockable : DockableVM {
         private INighttimeCalculator nighttimeCalculator;
 
+        public NighttimeData NighttimeData { get; private set; }
+
+        public AstrocolibriAPI.AstroColibriEvents Targets { get; private set; }
+
+        private readonly IApplicationMediator applicationMediator;
+        private readonly IFramingAssistantVM framingAssistantVM;
+
+        public ICommand CoordsToFramingCommand { get; set; }
+        public ICommand RemoveCommand { get; set; }
+
+        public ICommand RemoveAllCommand { get; set; }
+
         [ImportingConstructor]
         public AstrocolibriDockable(
             IProfileService profileService,
@@ -58,12 +70,24 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables {
             };
 
             CoordsToFramingCommand = new GalaSoft.MvvmLight.Command.RelayCommand<object>(SendCoordinatesToFraming);
+            RemoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<object>(RemoveDSO);
+            RemoveAllCommand = new GalaSoft.MvvmLight.Command.RelayCommand(RemoveAll);
 
             Astrocolibri.AstroColibriDockable = this;
         }
 
         private void SendCoordinatesToFraming(object dso) {
             _ = CoordsToFraming(dso);
+        }
+
+        private void RemoveDSO(object dso) {
+            Astrocolibri.API.RemoveEvent((DeepSkyObject)dso);
+            UpdateTargetInfo();
+        }
+
+        private void RemoveAll() {
+            Astrocolibri.API.RemoveAllEvents();
+            UpdateTargetInfo();
         }
 
         private async Task<bool> CoordsToFraming(object dso) {
@@ -78,15 +102,6 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables {
             NighttimeData = nighttimeCalculator.Calculate();
             RaisePropertyChanged(nameof(NighttimeData));
         }
-
-        public NighttimeData NighttimeData { get; private set; }
-
-        public AstrocolibriAPI.AstroColibriEvents Targets { get; private set; }
-
-        private readonly IApplicationMediator applicationMediator;
-        private readonly IFramingAssistantVM framingAssistantVM;
-
-        public ICommand CoordsToFramingCommand { get; set; }
 
         public void UpdateTargetInfo() {
             if (IsVisible) {

@@ -54,6 +54,7 @@ namespace ChristophNieswand.NINA.Astrocolibri {
             AstroColibriOptions.InitializeOptions();
             RaisePropertyChanged(nameof(AstroColibriOptions.Uid));
             RaisePropertyChanged(nameof(AstroColibriOptions.WaitMinMinutes));
+            RaisePropertyChanged(nameof(AstroColibriOptions.CheckMinutes));
             RaisePropertyChanged(nameof(AstroColibriOptions.JSONFilePath));
             RaisePropertyChanged(nameof(AstroColibriOptions.KeepFilesDays));
             RaisePropertyChanged(nameof(AstroColibriOptions.MinAltitude));
