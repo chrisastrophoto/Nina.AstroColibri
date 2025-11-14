@@ -10,290 +10,347 @@
     xmlns:util="clr-namespace:NINA.Core.Utility;assembly=NINA.Core">
 
     <DataTemplate x:Key="ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables.AstrocolibriDockable_Dockable">
-        <DataGrid
-            Name="MainGrid"
-            Margin="5"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            VerticalContentAlignment="Stretch"
-            AutoGenerateColumns="False"
-            ItemsSource="{Binding Path=Targets}"
-            Visibility="{Binding Targets, Converter={StaticResource NullToVisibilityCollapsedConverter}}">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Width="1000">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Grid Name="InnerGrid" Margin="5">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="25" />
-                                    <ColumnDefinition Width="120" />
-                                    <ColumnDefinition Width="200" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Grid.ColumnSpan="3"
-                                    Height="20"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding DSO.Name}" />
-                                <Button
-                                    Grid.Row="0"
-                                    Grid.Column="0"
-                                    Width="25"
-                                    Height="25"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Left"
-                                    BorderThickness="1"
-                                    Command="{Binding DataContext.CoordsToFramingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}, AncestorLevel=1}}"
-                                    CommandParameter="{Binding DSO}"
-                                    IsDefault="True"
-                                    IsEnabled="True"
-                                    IsManipulationEnabled="True"
-                                    Style="{StaticResource TertiaryBackgroundButton}"
-                                    Visibility="Visible">
-                                    <Button.ToolTip>
-                                        <ToolTip ToolTipService.ShowOnDisabled="False">
-                                            <TextBlock Text="{ns:Loc LblCoordinatesToFramingTooltip}" />
-                                        </ToolTip>
-                                    </Button.ToolTip>
-                                    <Grid>
-                                        <Path
-                                            Margin="5"
-                                            Data="{StaticResource FocusAssistantSVG}"
-                                            Fill="{StaticResource ButtonForegroundBrush}"
-                                            Stretch="Uniform"
-                                            UseLayoutRounding="True" />
+        <StackPanel Orientation="Vertical">
+            <Button
+                Width="25"
+                Height="25"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                BorderThickness="1"
+                Command="{Binding RemoveAllCommand}"
+                IsDefault="True"
+                IsEnabled="True"
+                IsManipulationEnabled="True"
+                Style="{StaticResource TertiaryBackgroundButton}"
+                Visibility="Visible">
+                <Button.ToolTip>
+                    <ToolTip ToolTipService.ShowOnDisabled="False">
+                        <TextBlock Text="Remove all Objects" />
+                    </ToolTip>
+                </Button.ToolTip>
+                <Grid>
+                    <Path
+                        Margin="5"
+                        Data="{StaticResource CancelSVG}"
+                        Fill="{StaticResource ButtonForegroundBrush}"
+                        Stretch="Uniform"
+                        UseLayoutRounding="True" />
+                </Grid>
+            </Button>
+            <DataGrid
+                Name="MainGrid"
+                Margin="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                AutoGenerateColumns="False"
+                ItemsSource="{Binding Path=Targets}"
+                Visibility="{Binding Targets, Converter={StaticResource NullToVisibilityCollapsedConverter}}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="1000">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid Name="InnerGrid" Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="25" />
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="200" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        Width="25"
+                                        Height="25"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Left"
+                                        BorderThickness="1"
+                                        Command="{Binding DataContext.CoordsToFramingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}, AncestorLevel=1}}"
+                                        CommandParameter="{Binding DSO}"
+                                        IsDefault="True"
+                                        IsEnabled="True"
+                                        IsManipulationEnabled="True"
+                                        Style="{StaticResource TertiaryBackgroundButton}"
+                                        Visibility="Visible">
+                                        <Button.ToolTip>
+                                            <ToolTip ToolTipService.ShowOnDisabled="False">
+                                                <TextBlock Text="{ns:Loc LblCoordinatesToFramingTooltip}" />
+                                            </ToolTip>
+                                        </Button.ToolTip>
+                                        <Grid>
+                                            <Path
+                                                Margin="5"
+                                                Data="{StaticResource FocusAssistantSVG}"
+                                                Fill="{StaticResource ButtonForegroundBrush}"
+                                                Stretch="Uniform"
+                                                UseLayoutRounding="True" />
+                                        </Grid>
+                                    </Button>
+                                    <Button
+                                        Grid.Row="0"
+                                        Grid.Column="3"
+                                        Width="25"
+                                        Height="25"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        BorderThickness="1"
+                                        Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}, AncestorLevel=1}}"
+                                        CommandParameter="{Binding DSO}"
+                                        IsDefault="True"
+                                        IsEnabled="True"
+                                        IsManipulationEnabled="True"
+                                        Style="{StaticResource TertiaryBackgroundButton}"
+                                        Visibility="Visible">
+                                        <Button.ToolTip>
+                                            <ToolTip ToolTipService.ShowOnDisabled="False">
+                                                <TextBlock Text="Remove this Object" />
+                                            </ToolTip>
+                                        </Button.ToolTip>
+                                        <Grid>
+                                            <Path
+                                                Margin="5"
+                                                Data="{StaticResource CancelSVG}"
+                                                Fill="{StaticResource ButtonForegroundBrush}"
+                                                Stretch="Uniform"
+                                                UseLayoutRounding="True" />
+                                        </Grid>
+                                    </Button>
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        Grid.ColumnSpan="3"
+                                        Height="20"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding DSO.Name}" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="RA:" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding DSO.Coordinates.RAString}" />
+                                    <Grid
+                                        Grid.Row="1"
+                                        Grid.RowSpan="13"
+                                        Grid.Column="3">
+                                        <Grid.Resources>
+                                            <util:BindingProxy x:Key="nighttimeProxy" Data="{Binding DataContext.NighttimeData, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}, AncestorLevel=1}}" />
+                                        </Grid.Resources>
+                                        <alt:AltitudeChart
+                                            Width="auto"
+                                            Height="auto"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            AnnotateAltitudeAxis="True"
+                                            AnnotateTimeAxis="True"
+                                            DataContext="{Binding DSO}"
+                                            NighttimeData="{Binding Source={StaticResource nighttimeProxy}, Path=Data}" />
                                     </Grid>
-                                </Button>
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="RA:" />
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding DSO.Coordinates.RAString}" />
-                                <Grid
-                                    Grid.Row="1"
-                                    Grid.RowSpan="13"
-                                    Grid.Column="3">
-                                    <Grid.Resources>
-                                        <util:BindingProxy x:Key="nighttimeProxy" Data="{Binding DataContext.NighttimeData, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}, AncestorLevel=1}}" />
-                                    </Grid.Resources>
-                                    <alt:AltitudeChart
-                                        Width="auto"
-                                        Height="auto"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Stretch"
-                                        VerticalContentAlignment="Stretch"
-                                        AnnotateAltitudeAxis="True"
-                                        AnnotateTimeAxis="True"
-                                        DataContext="{Binding DSO}"
-                                        NighttimeData="{Binding Source={StaticResource nighttimeProxy}, Path=Data}" />
+
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="Dec:" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding DSO.Coordinates.DecString}" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="Error Radius:" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding Error}" />
+
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="Trigger ID:" />
+                                    <TextBlock
+                                        Grid.Row="4"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding Trigger_id}" />
+
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="Time of discovery (UTC):" />
+                                    <TextBlock
+                                        Grid.Row="5"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding Time}" />
+                                    <TextBlock
+                                        Grid.Row="6"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="Classification:" />
+                                    <TextBlock
+                                        Grid.Row="6"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding Classification}" />
+                                    <TextBlock
+                                        Grid.Row="7"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="Type:" />
+                                    <TextBlock
+                                        Grid.Row="7"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding Type}" />
+                                    <TextBlock
+                                        Grid.Row="8"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="Alert Type:" />
+                                    <TextBlock
+                                        Grid.Row="8"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding Alert_type}" />
+                                    <TextBlock
+                                        Grid.Row="9"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="Flux:" />
+                                    <TextBlock
+                                        Grid.Row="9"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding Transient_flux}" />
+                                    <TextBlock
+                                        Grid.Row="10"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="Visibility:" />
+                                    <TextBlock
+                                        Grid.Row="10"
+                                        Grid.Column="2"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Text="{Binding Visibility}" />
+                                    <TextBlock
+                                        Grid.Row="11"
+                                        Grid.ColumnSpan="3"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Visibility="{Binding Img_url, Converter={StaticResource NullToVisibilityCollapsedConverter}}">
+                                        <Hyperlink NavigateUri="{Binding Img_url}" RequestNavigate="WebPageClick">
+                                            Visibity chart (external)
+                                        </Hyperlink>
+                                    </TextBlock>
+                                    <TextBlock
+                                        Grid.Row="12"
+                                        Grid.ColumnSpan="3"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Visibility="{Binding Url, Converter={StaticResource NullToVisibilityCollapsedConverter}}">
+                                        <Hyperlink NavigateUri="{Binding Url}" RequestNavigate="WebPageClick">
+                                            Details (external)
+                                        </Hyperlink>
+                                    </TextBlock>
+                                    <TextBlock
+                                        Grid.Row="13"
+                                        Grid.ColumnSpan="3"
+                                        Height="20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Visibility="{Binding Event_url, Converter={StaticResource NullToVisibilityCollapsedConverter}}">
+                                        <Hyperlink NavigateUri="{Binding Event_url}" RequestNavigate="WebPageClick">
+                                            Event Url (external)
+                                        </Hyperlink>
+                                    </TextBlock>
                                 </Grid>
-
-                                <TextBlock
-                                    Grid.Row="2"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="Dec:" />
-                                <TextBlock
-                                    Grid.Row="2"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding DSO.Coordinates.DecString}" />
-                                <TextBlock
-                                    Grid.Row="3"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="Error Radius:" />
-                                <TextBlock
-                                    Grid.Row="3"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding Error}" />
-
-                                <TextBlock
-                                    Grid.Row="4"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="Trigger ID:" />
-                                <TextBlock
-                                    Grid.Row="4"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding Trigger_id}" />
-
-                                <TextBlock
-                                    Grid.Row="5"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="Time of discovery (UTC):" />
-                                <TextBlock
-                                    Grid.Row="5"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding Time}" />
-                                <TextBlock
-                                    Grid.Row="6"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="Classification:" />
-                                <TextBlock
-                                    Grid.Row="6"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding Classification}" />
-                                <TextBlock
-                                    Grid.Row="7"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="Type:" />
-                                <TextBlock
-                                    Grid.Row="7"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding Type}" />
-                                <TextBlock
-                                    Grid.Row="8"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="Alert Type:" />
-                                <TextBlock
-                                    Grid.Row="8"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding Alert_type}" />
-                                <TextBlock
-                                    Grid.Row="9"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="Flux:" />
-                                <TextBlock
-                                    Grid.Row="9"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding Transient_flux}" />
-                                <TextBlock
-                                    Grid.Row="10"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="Visibility:" />
-                                <TextBlock
-                                    Grid.Row="10"
-                                    Grid.Column="2"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Text="{Binding Visibility}" />
-                                <TextBlock
-                                    Grid.Row="11"
-                                    Grid.ColumnSpan="3"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Visibility="{Binding Img_url, Converter={StaticResource NullToVisibilityCollapsedConverter}}">
-                                    <Hyperlink NavigateUri="{Binding Img_url}" RequestNavigate="WebPageClick">
-                                        Visibity chart (external)
-                                    </Hyperlink>
-                                </TextBlock>
-                                <TextBlock
-                                    Grid.Row="12"
-                                    Grid.ColumnSpan="3"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Visibility="{Binding Url, Converter={StaticResource NullToVisibilityCollapsedConverter}}">
-                                    <Hyperlink NavigateUri="{Binding Url}" RequestNavigate="WebPageClick">
-                                        Details (external)
-                                    </Hyperlink>
-                                </TextBlock>
-                                <TextBlock
-                                    Grid.Row="13"
-                                    Grid.ColumnSpan="3"
-                                    Height="20"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Visibility="{Binding Event_url, Converter={StaticResource NullToVisibilityCollapsedConverter}}">
-                                    <Hyperlink NavigateUri="{Binding Event_url}" RequestNavigate="WebPageClick">
-                                        Event Url (external)
-                                    </Hyperlink>
-                                </TextBlock>
-                            </Grid>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

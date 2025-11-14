@@ -24,17 +24,6 @@ using NINA.Sequencer.Utility;
 
 namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
 
-    /// <summary>
-    /// This Class shows the basic principle on how to add a new Sequence Trigger to the N.I.N.A. sequencer via the plugin interface
-    /// For ease of use this class inherits the abstract SequenceTrigger which already handles most of the running logic, like logging, exception handling etc.
-    /// A complete custom implementation by just implementing ISequenceTrigger is possible too
-    /// The following MetaData can be set to drive the initial values
-    /// --> Name - The name that will be displayed for the item
-    /// --> Description - a brief summary of what the item is doing. It will be displayed as a tooltip on mouseover in the application
-    /// --> Icon - a string to the key value of a Geometry inside N.I.N.A.'s geometry resources
-    ///
-    /// If the item has some preconditions that should be validated, it shall also extend the IValidatable interface and add the validation logic accordingly.
-    /// </summary>
     [ExportMetadata("Name", "AstroColibri Loop Condition")]
     [ExportMetadata("Description", "This condition is true until a new visible transient has been received from Astro-COLIBRI")]
     [ExportMetadata("Icon", "Astrocolibri_SVG")]
@@ -43,36 +32,6 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
     [JsonObject(MemberSerialization.OptIn)]
     public class AstrocolibriCondition : SequenceCondition {
 
-        /// <summary>
-        /// The constructor marked with [ImportingConstructor] will be used to import and construct the object
-        /// General device interfaces can be added to the constructor parameters and will be automatically injected on instantiation by the plugin loader
-        /// </summary>
-        /// <remarks>
-        /// Available interfaces to be injected:
-        ///     - IProfileService,
-        ///     - ICameraMediator,
-        ///     - ITelescopeMediator,
-        ///     - IFocuserMediator,
-        ///     - IFilterWheelMediator,
-        ///     - IGuiderMediator,
-        ///     - IRotatorMediator,
-        ///     - IFlatDeviceMediator,
-        ///     - IWeatherDataMediator,
-        ///     - IImagingMediator,
-        ///     - IApplicationStatusMediator,
-        ///     - INighttimeCalculator,
-        ///     - IPlanetariumFactory,
-        ///     - IImageHistoryVM,
-        ///     - IDeepSkyObjectSearchVM,
-        ///     - IDomeMediator,
-        ///     - IImageSaveMediator,
-        ///     - ISwitchMediator,
-        ///     - ISafetyMonitorMediator,
-        ///     - IApplicationMediator
-        ///     - IApplicationResourceDictionary
-        ///     - IFramingAssistantVM
-        ///     - IList<IDateTimeProvider>
-        /// </remarks>
         [ImportingConstructor]
         public AstrocolibriCondition() {
             HasNoTransient = true;
@@ -89,12 +48,6 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
             }
         }
 
-        /// <summary>
-        /// Once this check returns false, the condition will cause its parent instruction set to skip the rest and proceed with the next set
-        /// </summary>
-        /// <param name="previousItem"></param>
-        /// <param name="nextItem"></param>
-        /// <returns></returns>
         public override bool Check(ISequenceItem previousItem, ISequenceItem nextItem) {
             HasNoTransient = Astrocolibri.API.HasNoTransient;
             if (previousItem == null) {
@@ -116,10 +69,6 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
             };
         }
 
-        /// <summary>
-        /// This string will be used for logging
-        /// </summary>
-        /// <returns></returns>
         public override string ToString() {
             return $"Category: {Category}, Item: {nameof(AstrocolibriCondition)}, HasNoTransient: {HasNoTransient}";
         }

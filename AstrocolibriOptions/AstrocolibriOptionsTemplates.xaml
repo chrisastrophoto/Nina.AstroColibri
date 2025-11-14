@@ -34,7 +34,7 @@
                     Width="300"
                     VerticalAlignment="Center"
                     DockPanel.Dock="Left"
-                    Text="Next check for new transients in minutes" />
+                    Text="Check for new transients after " />
                 <TextBox
                     Width="75"
                     Margin="5,0,0,0"
@@ -43,9 +43,11 @@
                     Text="{Binding AstroColibriOptions.WaitMinMinutes}" />
                 <TextBlock
                     Width="700"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="left"
                     VerticalAlignment="Center"
                     DockPanel.Dock="Left"
-                    Text="Minimum 10 minutes. Currently 100 checks are allowed per day and User ID (Astro-Colibri limitation)." />
+                    Text="minutes. Minimum is 10 minutes. Currently 100 checks are allowed per day and User ID (Astro-Colibri limitation)." />
             </DockPanel>
             <DockPanel Margin="0,5,0,0" LastChildFill="False">
                 <TextBlock
@@ -141,6 +143,26 @@
                     VerticalAlignment="Center"
                     DockPanel.Dock="Left"
                     IsChecked="{Binding AstroColibriOptions.TestMode}" />
+            </DockPanel>
+            <DockPanel Margin="0,5,0,0" LastChildFill="True">
+                <TextBlock
+                    Width="300"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="Manual check for new transients in previous " />
+                <TextBox
+                    Width="75"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding AstroColibriOptions.CheckMinutes}" />
+                <TextBlock
+                    Width="700"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="left"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="minutes. Minimum is 10 minutes, maximum is 1440 minutes (24 hours)." />
             </DockPanel>
             <DockPanel Margin="0,5,0,0" LastChildFill="False">
                 <Button

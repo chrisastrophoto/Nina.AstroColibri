@@ -7,8 +7,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("1.2.0.1")]
-[assembly: AssemblyFileVersion("1.2.0.1")]
+[assembly: AssemblyVersion("1.3.0.1")]
+[assembly: AssemblyFileVersion("1.3.0.1")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("AstroColibri")]
@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © 2025 Christoph Nieswand")]
 
 // The minimum Version of N.I.N.A. that this plugin is compatible with
-[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.1.2.9001")]
+[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.2.0.9001")]
 
 // The license your plugin code is using
 [assembly: AssemblyMetadata("License", "MPL-2.0")]

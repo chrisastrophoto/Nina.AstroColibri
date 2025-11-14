@@ -16,7 +16,25 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables {
 
     [Export(typeof(IDockableVM))]
     public class AstrocolibriDockable : DockableVM {
+
+        #region Members
+
         private INighttimeCalculator nighttimeCalculator;
+
+        public NighttimeData NighttimeData { get; private set; }
+
+        public AstrocolibriAPI.AstroColibriEvents Targets { get; private set; }
+
+        private readonly IApplicationMediator applicationMediator;
+        private readonly IFramingAssistantVM framingAssistantVM;
+
+        public ICommand CoordsToFramingCommand { get; set; }
+        public ICommand RemoveCommand { get; set; }
+        public ICommand RemoveAllCommand { get; set; }
+
+        #endregion Members
+
+        #region Constructor
 
         [ImportingConstructor]
         public AstrocolibriDockable(
@@ -58,9 +76,29 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables {
             };
 
             CoordsToFramingCommand = new GalaSoft.MvvmLight.Command.RelayCommand<object>(SendCoordinatesToFraming);
+            RemoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<object>(RemoveDSO);
+            RemoveAllCommand = new GalaSoft.MvvmLight.Command.RelayCommand(RemoveAll);
 
             Astrocolibri.AstroColibriDockable = this;
         }
+
+        #endregion Constructor
+
+        #region Remove DSOs
+
+        private void RemoveDSO(object dso) {
+            Astrocolibri.API.RemoveEvent((DeepSkyObject)dso);
+            UpdateTargetInfo();
+        }
+
+        private void RemoveAll() {
+            Astrocolibri.API.RemoveAllEvents();
+            UpdateTargetInfo();
+        }
+
+        #endregion Remove DSOs
+
+        #region Send Coordinates to Framing Assistant
 
         private void SendCoordinatesToFraming(object dso) {
             _ = CoordsToFraming(dso);
@@ -74,19 +112,18 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables {
             return false;
         }
 
+        #endregion Send Coordinates to Framing Assistant
+
+        #region Update NichttimeCalculator
+
         private void NighttimeCalculator_OnReferenceDayChanged(object sender, EventArgs e) {
             NighttimeData = nighttimeCalculator.Calculate();
             RaisePropertyChanged(nameof(NighttimeData));
         }
 
-        public NighttimeData NighttimeData { get; private set; }
+        #endregion Update NichttimeCalculator
 
-        public AstrocolibriAPI.AstroColibriEvents Targets { get; private set; }
-
-        private readonly IApplicationMediator applicationMediator;
-        private readonly IFramingAssistantVM framingAssistantVM;
-
-        public ICommand CoordsToFramingCommand { get; set; }
+        #region Update DSOs
 
         public void UpdateTargetInfo() {
             if (IsVisible) {
@@ -109,5 +146,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables {
                 }
             }
         }
+
+        #endregion Update DSOs
     }
 }

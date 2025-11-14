@@ -29,6 +29,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriOptions {
 
         public void InitializeOptions() {
             waitMinMinutes = optionsAccessor.GetValueInt32(nameof(WaitMinMinutes), Properties.Settings.Default.WaitMinMinutes);
+            checkMinutes = optionsAccessor.GetValueInt32(nameof(CheckMinutes), Properties.Settings.Default.CheckMinutes);
             uid = optionsAccessor.GetValueString(nameof(Uid), Properties.Settings.Default.AstroColibriUID);
             apiUrl = optionsAccessor.GetValueString(nameof(ApiUrl), Properties.Settings.Default.AstroColibriAPIUrl);
             jsonFilePath = optionsAccessor.GetValueString(nameof(JSONFilePath), Environment.ExpandEnvironmentVariables(Properties.Settings.Default.JSONFilePath));
@@ -64,6 +65,24 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriOptions {
                     Logger.Debug($"Set Wait minimum minutes={value}");
                     waitMinMinutes = value;
                     optionsAccessor.SetValueInt32(nameof(WaitMinMinutes), waitMinMinutes);
+                    ac.RaisePropertyChanged();
+                }
+            }
+        }
+
+        private int checkMinutes;
+
+        public int CheckMinutes {
+            get => checkMinutes;
+            set {
+                if (value < 10)
+                    value = 10;
+                if (value > 1440)
+                    value = 1440;
+                if (checkMinutes != value) {
+                    Logger.Debug($"Set check minutes={value}");
+                    checkMinutes = value;
+                    optionsAccessor.SetValueInt32(nameof(CheckMinutes), checkMinutes);
                     ac.RaisePropertyChanged();
                 }
             }
