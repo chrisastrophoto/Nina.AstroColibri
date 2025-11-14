@@ -19,6 +19,18 @@ namespace ChristophNieswand.NINA.Astrocolibri {
         public readonly IPluginOptionsAccessor pluginSettings;
         private readonly IProfileService profileService;
 
+        #region Members
+
+        public static AstroColibriAPI API { get; set; } = null;
+
+        public static AstrocolibriOptions.AstrocolibriOptions AstroColibriOptions { get; private set; }
+
+        public static AstrocolibriDockables.AstrocolibriDockable AstroColibriDockable { get; set; } = null;
+
+        #endregion Members
+
+        #region Constructor
+
         [ImportingConstructor]
         public Astrocolibri(IProfileService profileService) {
             if (Settings.Default.UpdateSettings) {
@@ -38,17 +50,13 @@ namespace ChristophNieswand.NINA.Astrocolibri {
             OpenJSONFolderDiagCommand = new GalaSoft.MvvmLight.Command.RelayCommand(OpenJSONFolderDiag);
         }
 
+        #endregion Constructor
+
         public override Task Teardown() {
             profileService.ProfileChanged -= ProfileService_ProfileChanged;
 
             return base.Teardown();
         }
-
-        public static AstroColibriAPI API { get; set; } = null;
-
-        public static AstrocolibriOptions.AstrocolibriOptions AstroColibriOptions { get; private set; }
-
-        public static AstrocolibriDockables.AstrocolibriDockable AstroColibriDockable { get; set; } = null;
 
         public void ProfileService_ProfileChanged(object sender, EventArgs e) {
             AstroColibriOptions.InitializeOptions();

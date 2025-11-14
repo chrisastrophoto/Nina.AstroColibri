@@ -149,7 +149,7 @@
                     Width="300"
                     VerticalAlignment="Center"
                     DockPanel.Dock="Left"
-                    Text="Manual check for new transients in previous " />
+                    Text="Manually check for new transients in previous " />
                 <TextBox
                     Width="75"
                     Margin="5,0,0,0"
