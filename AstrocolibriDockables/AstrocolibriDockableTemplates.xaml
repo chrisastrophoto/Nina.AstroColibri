@@ -11,32 +11,48 @@
 
     <DataTemplate x:Key="ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables.AstrocolibriDockable_Dockable">
         <StackPanel Orientation="Vertical">
-            <Button
-                Width="25"
-                Height="25"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                BorderThickness="1"
-                Command="{Binding RemoveAllCommand}"
-                IsDefault="True"
-                IsEnabled="True"
-                IsManipulationEnabled="True"
-                Style="{StaticResource TertiaryBackgroundButton}"
-                Visibility="Visible">
-                <Button.ToolTip>
-                    <ToolTip ToolTipService.ShowOnDisabled="False">
-                        <TextBlock Text="Remove all Objects" />
-                    </ToolTip>
-                </Button.ToolTip>
-                <Grid>
-                    <Path
-                        Margin="5"
-                        Data="{StaticResource CancelSVG}"
-                        Fill="{StaticResource ButtonForegroundBrush}"
-                        Stretch="Uniform"
-                        UseLayoutRounding="True" />
-                </Grid>
-            </Button>
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    Width="200"
+                    Height="25"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding RunLatestTransientsCommand}"
+                    Content="Check for Transients">
+                    <Button.ToolTip>
+                        <ToolTip ToolTipService.ShowOnDisabled="False">
+                            <TextBlock Text="Check for Transients" />
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+                <Button
+                    Width="25"
+                    Height="25"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    BorderThickness="1"
+                    Command="{Binding RemoveAllCommand}"
+                    IsDefault="True"
+                    IsEnabled="True"
+                    IsManipulationEnabled="True"
+                    Style="{StaticResource TertiaryBackgroundButton}"
+                    Visibility="Visible">
+                    <Button.ToolTip>
+                        <ToolTip ToolTipService.ShowOnDisabled="False">
+                            <TextBlock Text="Remove all Objects" />
+                        </ToolTip>
+                    </Button.ToolTip>
+                    <Grid>
+                        <Path
+                            Margin="5"
+                            Data="{StaticResource CancelSVG}"
+                            Fill="{StaticResource ButtonForegroundBrush}"
+                            Stretch="Uniform"
+                            UseLayoutRounding="True" />
+                    </Grid>
+                </Button>
+            </StackPanel>
             <DataGrid
                 Name="MainGrid"
                 Margin="5"

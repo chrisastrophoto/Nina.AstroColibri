@@ -31,6 +31,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables {
         public ICommand CoordsToFramingCommand { get; set; }
         public ICommand RemoveCommand { get; set; }
         public ICommand RemoveAllCommand { get; set; }
+        public ICommand RunLatestTransientsCommand { get; set; }
 
         #endregion Members
 
@@ -78,6 +79,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriDockables {
             CoordsToFramingCommand = new GalaSoft.MvvmLight.Command.RelayCommand<object>(SendCoordinatesToFraming);
             RemoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<object>(RemoveDSO);
             RemoveAllCommand = new GalaSoft.MvvmLight.Command.RelayCommand(RemoveAll);
+            RunLatestTransientsCommand = Astrocolibri.API.RunLatestTransientsCommand;
 
             Astrocolibri.AstroColibriDockable = this;
         }
