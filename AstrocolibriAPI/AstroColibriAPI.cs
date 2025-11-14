@@ -20,13 +20,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
     public class AstroColibriAPI {
 
-        public AstroColibriAPI() {
-            LastTransientCheck = DateTime.Now.Subtract(new TimeSpan(0, Astrocolibri.AstroColibriOptions.WaitMinMinutes, 0, 0));
-            CoreUtil.DirectoryCleanup(Astrocolibri.AstroColibriOptions.JSONFilePath, new TimeSpan(-Astrocolibri.AstroColibriOptions.KeepFilesDays, 0, 0, 0));
-            ACEvents = new AstroColibriEvents();
-            HasNoTransient = true;
-            RunLatestTransientsCommand = new GalaSoft.MvvmLight.Command.RelayCommand(DoLatestTransients);
-        }
+        #region Members
 
         public DateTime LastTransientCheck { get; private set; }
 
@@ -38,7 +32,21 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
         public ICommand RunLatestTransientsCommand { get; }
 
-        //public CustomHorizon Horizon { get; private set; }
+        #endregion Members
+
+        #region Constructor
+
+        public AstroColibriAPI() {
+            LastTransientCheck = DateTime.Now.Subtract(new TimeSpan(0, Astrocolibri.AstroColibriOptions.WaitMinMinutes, 0, 0));
+            CoreUtil.DirectoryCleanup(Astrocolibri.AstroColibriOptions.JSONFilePath, new TimeSpan(-Astrocolibri.AstroColibriOptions.KeepFilesDays, 0, 0, 0));
+            ACEvents = new AstroColibriEvents();
+            HasNoTransient = true;
+            RunLatestTransientsCommand = new GalaSoft.MvvmLight.Command.RelayCommand(DoLatestTransients);
+        }
+
+        #endregion Constructor
+
+        #region Generic API Calls
 
         private async Task<string> CallAPIGetAsync(string endpoint, params object[] pars) {
             string resp = null;
@@ -59,6 +67,10 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
             return resp;
         }
+
+        #endregion Generic API Calls
+
+        #region Specific API Calls
 
         public string KnownSources() {
             string resp = null;
@@ -148,135 +160,14 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             return vis;
         }
 
-        /*
-        public void LatestTransients() {
-            string resp = null;
+        #endregion Specific API Calls
 
-            int diff = (int)DateTime.Now.Subtract(LastTransientCheck).TotalMinutes;
-            int soll = Astrocolibri.AstroColibriOptions.WaitMinMinutes;
+        #region Retrieve Transients
 
-            if (Astrocolibri.AstroColibriOptions.TestMode)
-                diff = 10000;
-
-            if (diff >= soll) {
-                Logger.Info("Checking for latest Events from Astro-Colibri");
-                LatestTransientsBody eb = new LatestTransientsBody {
-                    uid = Astrocolibri.AstroColibriOptions.Uid,
-                    return_format = "json",
-                    time_range = new LatestTransientsBodyMaxMin {
-                        max = DateTime.Now,
-                        min = LastTransientCheck
-                    }
-                };
-                // Reset last check for transients
-                LastTransientCheck = DateTime.Now;
-                LatestTransient = null;
-                HasNoTransient = true;
-
-                JsonSerializerSettings SerSet = new JsonSerializerSettings();
-                SerSet.Formatting = Formatting.Indented;
-                SerSet.NullValueHandling = NullValueHandling.Ignore;
-
-                string body = JsonConvert.SerializeObject(eb, SerSet);
-
-                try {
-                    resp = Astrocolibri.AstroColibriOptions.TestMode
-                        ? ReadEventFromResource("LatestEvents_TestSet.json")
-                        : (Task.Run(() => CallAPIPostAsync("latest_transients", body))).Result;
-
-                    string now = DateTime.Now.ToString("yyyyMMddHHmmss");
-
-                    LatestTransientsResponse ltr = JsonConvert.DeserializeObject<LatestTransientsResponse>(resp);
-                    if (ltr != null && ltr.voevents.Count > 0) {
-                        SaveEventToFile("LatestEvents_" + now, resp);
-                        Notification.ShowSuccess("Got Events from Astro-Colibri");
-                        Logger.Info("Got Events from Astro-Colibri");
-                        List<EventResponse> verl = (List<EventResponse>)ltr.voevents;
-                        int i = 0;
-                        foreach (EventResponse er in verl) {
-                            VoeventResponse ver = null;
-                            if (!Astrocolibri.AstroColibriOptions.TestMode)
-                                ver = VoeventCall(er.trigger_id, now);
-                            string err = er.err + " " + "deg";
-                            if (err == "None deg" || err == "-1.0 deg")
-                                if (ver != null) {
-                                    try {
-                                        string error = ver.voevent.WhereWhen.ObsDataLocation.ObservationLocation.AstroCoords.Position2D.Error2Radius;
-                                        string unit = ver.voevent.WhereWhen.ObsDataLocation.ObservationLocation.AstroCoords.Position2D.unit;
-                                        if (error != null && error != "" && unit != null && unit != "")
-                                            err = error + " " + unit;
-                                    } catch (Exception ex) {
-                                    }
-                                }
-                            if (err == "None deg" || err == "-1.0 deg")
-                                err = "";
-                            double dec = er.dec;
-                            double ra = er.ra;
-                            //VisibilityPlotResponse vis = VisibilityPlot(er, now);
-
-                            VisibilityPlotDetailedResponse visDet = null;
-                            if (!Astrocolibri.AstroColibriOptions.TestMode)
-                                visDet = VisibilityPlotDetailed(er, now);
-                            DeepSkyObject dso = new DeepSkyObject(er.trigger_id, new Coordinates(er.ra, er.dec, Epoch.J2000, Coordinates.RAType.Degrees), "", Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Horizon);
-                            dso.Name = er.source_name;
-                            if (Astrocolibri.AstroColibriOptions.TestMode) {
-                                switch (er.source_name) {
-                                    case "Visible Target":
-                                        MakeVisibleNow(dso);
-                                        break;
-
-                                    case "Invisible Target":
-                                        MakeInvisible(dso);
-                                        break;
-
-                                    case "Never visible Target":
-                                        MakeNeverVisible(dso);
-                                        break;
-
-                                    default:
-                                        break;
-                                }
-                                dec = dso.Coordinates.Dec;
-                                ra = dso.Coordinates.RADegrees;
-                            }
-                            double[] altaz = GetAltitude(ra, dec);
-                            double alt = altaz[0];
-                            if (IsNeverVisible(dec)) {
-                                Notification.ShowSuccess("Event " + er.source_name + " is NEVER visible and will be ignored! Declination: " + dec);
-                                Logger.Info("Event " + er.source_name + " is NEVER visible and will be ignored! Declination: " + dec);
-                            } else {
-                                if (IsVisibleNow(altaz)) {
-                                    Notification.ShowWarning("Event " + er.source_name + " is visible! Altidude now: " + alt, new TimeSpan(0, 10, 0, 0));
-                                    Logger.Info("Event " + er.source_name + " is visible! Altitude now:" + alt);
-                                    InsertEvent(i, dso, er, visDet, err, "Visible now");
-                                    i++;
-                                    LatestTransient = dso;
-                                    HasNoTransient = false;
-                                } else {
-                                    if (IsVisibleAtNight(dso)) {
-                                        Notification.ShowInformation("Event " + er.source_name + " is currently not visible, but becomes visible during nighttime: Altidude now: " + alt, new TimeSpan(0, 10, 0, 0));
-                                        Logger.Info("Event " + er.source_name + " is currently not visible, but becomes visible during nighttime: Altitude now:" + alt);
-                                        InsertEvent(i, dso, er, visDet, err, "Visible at night");
-                                        i++;
-                                    } else {
-                                        Notification.ShowSuccess("Event " + er.source_name + " is currently not visible and is visible only during daytime: Altidude now: " + alt);
-                                        Logger.Info("Event " + er.source_name + " is currently not visible and is visible only during daytime: Altitude now:" + alt);
-                                    }
-                                }
-                            }
-                        }
-                        Astrocolibri.AstroColibriDockable.UpdateTargetInfo();
-                    } else {
-                        Notification.ShowInformation("Got NO Events from Astro-Colibri");
-                        Logger.Info("Got NO Events from Astro-Colibri");
-                    }
-                } catch (Exception ex) {
-                    Logger.Error(ex);
-                }
-            }
-            return;
+        // This is the call for retrieving transients via sequence
+        private void DoLatestTransients() {
+            Task.Run(() => CallLatestTransients());
         }
-        */
 
         public void LatestTransients() {
             int diff = (int)DateTime.Now.Subtract(LastTransientCheck).TotalMinutes;
@@ -293,6 +184,12 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
                 HasNoTransient = true;
             }
             return;
+        }
+
+        // This is the call for retrieving transients via manual button click
+
+        private async Task CallLatestTransients() {
+            await Task.Run(() => LatestTransientsManual());
         }
 
         public void LatestTransientsManual() {
@@ -423,6 +320,10 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             return;
         }
 
+        #endregion Retrieve Transients
+
+        #region Housekeeping Events
+
         private void InsertEvent(int i, DeepSkyObject dso, EventResponse er, VisibilityPlotDetailedResponse visDet, string err, string visibility) {
             if (Astrocolibri.AstroColibriOptions.TestMode)
                 System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
@@ -446,17 +347,13 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
         public void RemoveAllEvents() {
             System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
-                ACEvents = new AstroColibriEvents();
+                ACEvents = [];
             });
         }
 
-        private void DoLatestTransients() {
-            Task.Run(() => CallLatestTransients());
-        }
+        #endregion Housekeeping Events
 
-        private async Task CallLatestTransients() {
-            await Task.Run(() => LatestTransientsManual());
-        }
+        #region Read events from file/resource for test cases
 
         private void SaveEventToFile(string name, string resp) {
             Directory.CreateDirectory(Astrocolibri.AstroColibriOptions.JSONFilePath);
@@ -478,6 +375,10 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             }
             return json;
         }
+
+        #endregion Read events from file/resource for test cases
+
+        #region Analyze visibility of DSO
 
         private static double[] GetAltitude(double ra, double dec) {
             return GetAltitude(ra, dec, null);
@@ -555,10 +456,14 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
             return false;
         }
 
+        #endregion Analyze visibility of DSO
+
+        #region Generate visibility for test cases
+
         private static void MakeVisibleNow(DeepSkyObject dso) {
             double LST = AstroUtil.GetLocalSiderealTimeNow(Astrocolibri.AstroColibriOptions.profileService.ActiveProfile.AstrometrySettings.Longitude);
             double ra = AstroUtil.HoursToDegrees(LST);
-            double dec = 0.0; // mus be better
+            double dec = 0.0;
             dso.Coordinates = new Coordinates(ra, dec, Epoch.J2000, Coordinates.RAType.Degrees);
         }
 
@@ -583,5 +488,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriAPI {
 
             dso.Coordinates = new Coordinates(ra, dec, Epoch.J2000, Coordinates.RAType.Degrees);
         }
+
+        #endregion Generate visibility for test cases
     }
 }

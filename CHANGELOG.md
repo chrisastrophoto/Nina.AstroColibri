@@ -1,5 +1,12 @@
 ﻿# AstroColibri
 
+## 1.3.0.1
+
+- New Features:
+	- It is now possible to remove all or selected events from the dockable in the image tab by clicking the appropriate buttons.
+	
+	- The check for transient button can now retrieve events of the last at max. 24 hours. There is a new setting to modify this period: "Manual check for new transients in previous xxxx minutes".
+
 ## 1.2.0.1
 
 - New Features:

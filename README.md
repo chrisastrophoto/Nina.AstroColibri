@@ -32,8 +32,8 @@ Note however, that there is always a delay between the actual event in the sky a
 - The sequence will check for new event after each image recorded, but not more frequenly than specified by the according paramter above.  
 Once events are recorded, data and visibilty charts for these events are shown in a dockable in the "Image" tab named "Altitude Charts for Astro-COLIBRI Events" as long as the target is currently visible or might become visible after start of nautical dawn in the evening and before nautical down in the morning. 
 Each event has a button on the left side next to the event source name, which allows to send the coordinates of the event source to the framing assistant.
-New subsequent events are inserted on the top of the "Altitude Charts for Astro-COLIBRI Events".
-The list of events is cleared, when you quit NINA.
+New subsequent events are inserted on the top of the "Altitude Charts for Astro-COLIBRI Events".  
+The list of events is cleared, when you quit NINA or when you use the Remove Button on top of all events. You can remove a particular event by using the Remove Button next to the framing assistant button of the particular event.
 
 - Optionlly add an "AstroColibri Condition" into an existing loop. It will trigger as soon as the "AstroColibri Trigger" has detected a visible Event. The user is free to define whatever should happen, after leaving the loop.  
 IMPORTANT: Add an additional Loop Condition, otherwise the instructions in the loop will eventually repeated forever ... until an event is received.

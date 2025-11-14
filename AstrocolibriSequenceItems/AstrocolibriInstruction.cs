@@ -35,6 +35,8 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
     [JsonObject(MemberSerialization.OptIn)]
     public class AstrocolibriInstruction : SequenceItem {
 
+        #region Members
+
         [JsonProperty]
         private string DsoTemplate { get; set; }
 
@@ -44,6 +46,17 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
                 RaisePropertyChanged();
             }
         }
+
+        [JsonProperty]
+        public IApplicationMediator ApplicationMediator { get; set; }
+
+        public ISequenceMediator SequenceMediator { get; set; }
+
+        public IProfileService ProfileService { get; set; }
+
+        #endregion Members
+
+        #region Constructors
 
         [ImportingConstructor]
         public AstrocolibriInstruction(IProfileService profileService, IApplicationMediator applicationMediator, ISequenceMediator sequenceMediator) {
@@ -57,12 +70,7 @@ namespace ChristophNieswand.NINA.Astrocolibri.AstrocolibriSequenceItems {
             CopyMetaData(copyMe);
         }
 
-        [JsonProperty]
-        public IApplicationMediator ApplicationMediator { get; set; }
-
-        public ISequenceMediator SequenceMediator { get; set; }
-
-        public IProfileService ProfileService { get; set; }
+        #endregion Constructors
 
         public override Task Execute(IProgress<ApplicationStatus> progress, CancellationToken token) {
             // Add logic to run the item here
